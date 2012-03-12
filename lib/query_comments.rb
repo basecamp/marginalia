@@ -2,6 +2,8 @@ require 'active_record'
 require 'action_controller'
 
 module QueryComments
+  mattr_accessor :comment
+
   module ActiveRecordInstrumentation
     def self.included(instrumented_class)
       instrumented_class.class_eval do
@@ -11,7 +13,7 @@ module QueryComments
     end
 
     def execute_with_instrumentation(sql, name = nil)
-      sql = "#{sql} /*#{ActiveRecord::Base.query_comment}*/"
+      sql = "#{sql} /*#{QueryComments.comment}*/"
       execute_without_instrumentation(sql, name)
     end
   end
@@ -26,24 +28,20 @@ module QueryComments
 
     def to_sql_with_instrumentation(arel)
       if arel.respond_to?(:ast)
-        "#{visitor.accept(arel.ast)} /*#{ActiveRecord::Base.query_comment}*/"
+        "#{visitor.accept(arel.ast)} /*#{QueryComments.comment}*/"
       else
-        "#{arel} /*#{ActiveRecord::Base.query_comment}*/"
+        "#{arel} /*#{QueryComments.comment}*/"
       end
     end
-  end
-
-  class ActiveRecord::Base
-    cattr_accessor :query_comment
   end
 
   def self.initialize!
     ActionController::Base.class_eval do
       def record_query_comment
-        ActiveRecord::Base.query_comment = "application:BCX,controller:#{controller_name},action:#{action_name}"
+        QueryComments.comment = "application:BCX,controller:#{controller_name},action:#{action_name}"
         yield
       ensure
-        ActiveRecord::Base.query_comment = nil
+        QueryComments.comment = nil
       end
       around_filter :record_query_comment
     end
