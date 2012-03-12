@@ -31,6 +31,21 @@ Set the application name shown in the log like so, perhaps in `config/initialize
 
 MySQL only, currently. Tested with mysql and mysql2 gems. Patches are welcome for other database adapters (with tests, of course).
 
+## Contributing
+
+Start by bundling and creating the test database:
+
+    bundle
+    rake db:create
+
+Then, running `rake` will run the tests just on the original MySQL adapter:
+
+    rake
+
+To run the test suite against both `mysql2` and the original adapter:
+
+    rake test:all
+
 ## Thanks
 
 Big thanks to @thoughtbot's Paperclip gem, which inspired the Rails 2 and 3 style supported Railtie code.
