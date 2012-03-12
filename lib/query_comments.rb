@@ -7,26 +7,24 @@ module QueryComments
   module ActiveRecordInstrumentation
     def self.included(instrumented_class)
       instrumented_class.class_eval do
-        alias_method :execute_without_instrumentation, :execute
-        alias_method :execute, :execute_with_instrumentation
+        alias_method_chain :execute, :query_comments
       end
     end
 
-    def execute_with_instrumentation(sql, name = nil)
+    def execute_with_query_comments(sql, name = nil)
       sql = "#{sql} /*#{QueryComments.comment}*/"
-      execute_without_instrumentation(sql, name)
+      execute_without_query_comments(sql, name)
     end
   end
 
   module ArelInstrumentation
     def self.included(instrumented_class)
       instrumented_class.class_eval do
-        alias_method :to_sql_without_instrumentation, :to_sql
-        alias_method :to_sql, :to_sql_with_instrumentation
+        alias_method_chain :to_sql, :query_comments
       end
     end
 
-    def to_sql_with_instrumentation(arel)
+    def to_sql_with_query_comments(arel)
       if arel.respond_to?(:ast)
         "#{visitor.accept(arel.ast)} /*#{QueryComments.comment}*/"
       else
