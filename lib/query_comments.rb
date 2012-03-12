@@ -1,6 +1,7 @@
-# Could run in an initializer, or place in lib/query_commenter.rb or in a gem
-module QueryComments
+require 'active_record'
+require 'action_controller'
 
+module QueryComments
   module ActiveRecordInstrumentation
     def self.included(instrumented_class)
       instrumented_class.class_eval do
@@ -20,7 +21,6 @@ module QueryComments
   end
 
   def self.initialize!
-
     ActionController::Base.class_eval do
       def record_query_comment
         ActiveRecord::Base.query_comment = "application:BCX,controller:#{controller_name},action:#{action_name}"
@@ -33,17 +33,14 @@ module QueryComments
 
     if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
       ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
-         include QueryComments::ActiveRecordInstrumentation 
+        include QueryComments::ActiveRecordInstrumentation
       end
     end
-    
+
     if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
       ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
-         include QueryComments::ActiveRecordInstrumentation 
+        include QueryComments::ActiveRecordInstrumentation
       end
     end
   end
 end
-
-# Via an initializer or railtie in a gem, call:
-QueryComments.initialize!
