@@ -5,7 +5,7 @@ require 'pp'
 require 'query_comments'
 
 ActiveRecord::Base.establish_connection({
-  :adapter  => "mysql",
+  :adapter  => ENV["DRIVER"] || "mysql",
   :host     => "localhost",
   :username => "root",
   :database => "query_comments_test"

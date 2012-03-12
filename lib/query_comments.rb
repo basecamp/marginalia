@@ -14,8 +14,7 @@ module QueryComments
     end
 
     def execute_with_query_comments(sql, name = nil)
-      sql = "#{sql} /*#{QueryComments.comment}*/"
-      execute_without_query_comments(sql, name)
+      execute_without_query_comments("#{sql} /*#{QueryComments.comment}*/", name)
     end
   end
 

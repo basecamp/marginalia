@@ -1,13 +1,21 @@
 #!/usr/bin/env rake
 require "bundler/gem_tasks"
-require 'rake/clean'
-require "rake/testtask"
 
-task :default => [:test]
+task :default => ['test:mysql']
 
-Rake::TestTask.new do |t|
-  t.libs << 'test'
-  t.pattern = 'test/*_test.rb'
+namespace :test do
+  desc "test all drivers"
+  task :all => [:mysql, :mysql2]
+
+  desc "test mysql driver"
+  task :mysql do
+    sh "DRIVER=mysql ruby -Ilib -Itest test/*_test.rb"
+  end
+
+  desc "test mysql2 driver"
+  task :mysql2 do
+    sh "DRIVER=mysql2 ruby -Ilib -Itest test/*_test.rb"
+  end
 end
 
 namespace :db do
