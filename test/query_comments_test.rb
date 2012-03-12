@@ -51,7 +51,7 @@ class QueryCommentsTest < Test::Unit::TestCase
 
   def test_query_commenting_on_mysql_driver_with_action
     PostsController.action(:driver_only).call(@env)
-    assert_match %r{select id from posts /\*application:BCX,controller:posts,action:driver_only\*/$}, @queries.first
+    assert_match %r{select id from posts /\*application:rails,controller:posts,action:driver_only\*/$}, @queries.first
   end
 
   def test_query_commenting_on_arel_with_no_action
@@ -61,10 +61,18 @@ class QueryCommentsTest < Test::Unit::TestCase
 
   def test_query_commenting_on_arel_with_action
     PostsController.action(:arel_only).call(@env)
-    assert_match %r{SELECT `posts`\.\* FROM `posts`  /\*application:BCX,controller:posts,action:arel_only\*/$}, @queries.last
+    assert_match %r{SELECT `posts`\.\* FROM `posts`  /\*application:rails,controller:posts,action:arel_only\*/$}, @queries.last
+  end
+
+  def test_configuring_application
+    QueryComments.application_name = "customapp"
+    PostsController.action(:driver_only).call(@env)
+
+    assert_match %r{/\*application:customapp,controller:posts,action:driver_only\*/$}, @queries.first
   end
 
   def teardown
+    QueryComments.application_name = nil
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
   end
 end

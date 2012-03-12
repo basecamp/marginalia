@@ -2,7 +2,7 @@ require 'active_record'
 require 'action_controller'
 
 module QueryComments
-  mattr_accessor :comment
+  mattr_accessor :comment, :application_name
 
   module ActiveRecordInstrumentation
     def self.included(instrumented_class)
@@ -38,7 +38,7 @@ module QueryComments
   def self.initialize!
     ActionController::Base.class_eval do
       def record_query_comment
-        QueryComments.comment = "application:BCX,controller:#{controller_name},action:#{action_name}"
+        QueryComments.comment = "application:#{QueryComments.application_name || "rails"},controller:#{controller_name},action:#{action_name}"
         yield
       ensure
         QueryComments.comment = nil
