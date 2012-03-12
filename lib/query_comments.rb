@@ -16,6 +16,23 @@ module QueryComments
     end
   end
 
+  module ArelInstrumentation
+    def self.included(instrumented_class)
+      instrumented_class.class_eval do
+        alias_method :to_sql_without_instrumentation, :to_sql
+        alias_method :to_sql, :to_sql_with_instrumentation
+      end
+    end
+
+    def to_sql_with_instrumentation(arel)
+      if arel.respond_to?(:ast)
+        "#{visitor.accept(arel.ast)} /*#{ActiveRecord::Base.query_comment}*/"
+      else
+        "#{arel} /*#{ActiveRecord::Base.query_comment}*/"
+      end
+    end
+  end
+
   class ActiveRecord::Base
     cattr_accessor :query_comment
   end
@@ -34,12 +51,14 @@ module QueryComments
     if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
       ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
         include QueryComments::ActiveRecordInstrumentation
+        include QueryComments::ArelInstrumentation
       end
     end
 
     if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
       ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
         include QueryComments::ActiveRecordInstrumentation
+        include QueryComments::ArelInstrumentation
       end
     end
   end
