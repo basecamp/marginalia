@@ -33,7 +33,7 @@ unless Post.table_exists?
   end
 end
 
-QueryComments.initialize!
+QueryComments::Railtie.insert
 
 class QueryCommentsTest < Test::Unit::TestCase
   def setup

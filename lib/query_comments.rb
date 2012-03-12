@@ -1,6 +1,8 @@
 require 'active_record'
 require 'action_controller'
 
+require 'query_comments/railtie'
+
 module QueryComments
   mattr_accessor :comment, :application_name
 
@@ -29,32 +31,6 @@ module QueryComments
         "#{visitor.accept(arel.ast)} /*#{QueryComments.comment}*/"
       else
         "#{arel} /*#{QueryComments.comment}*/"
-      end
-    end
-  end
-
-  def self.initialize!
-    ActionController::Base.class_eval do
-      def record_query_comment
-        QueryComments.comment = "application:#{QueryComments.application_name || "rails"},controller:#{controller_name},action:#{action_name}"
-        yield
-      ensure
-        QueryComments.comment = nil
-      end
-      around_filter :record_query_comment
-    end
-
-    if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
-      ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
-        include QueryComments::ActiveRecordInstrumentation
-        include QueryComments::ArelInstrumentation
-      end
-    end
-
-    if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
-      ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
-        include QueryComments::ActiveRecordInstrumentation
-        include QueryComments::ArelInstrumentation
       end
     end
   end
