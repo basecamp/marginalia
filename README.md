@@ -31,6 +31,10 @@ Set the application name shown in the log like so, perhaps in `config/initialize
 
 MySQL only, currently. Tested with mysql and mysql2 gems. Patches are welcome for other database adapters (with tests, of course).
 
+## Thanks
+
+Big thanks to @thoughtbot's Paperclip gem, which inspired the Rails 2 and 3 style supported Railtie code.
+
 ## License
 
 MIT. Please see `LICENSE`.
