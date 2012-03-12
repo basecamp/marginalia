@@ -27,9 +27,16 @@ module QueryComments
 
     def to_sql_with_query_comments(arel)
       if arel.respond_to?(:ast)
-        "#{visitor.accept(arel.ast)} /*#{QueryComments.comment}*/"
+        query = visitor.accept(arel.ast).to_s
       else
-        "#{arel} /*#{QueryComments.comment}*/"
+        query = arel.to_s
+      end
+
+      comment = "/*#{QueryComments.comment}*/"
+      if query.ends_with?(comment)
+        query
+      else
+        "#{query} #{comment}"
       end
     end
   end
