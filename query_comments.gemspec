@@ -13,6 +13,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "actionpack", ">= 2.3", "<= 3.2"
   gem.add_runtime_dependency "activerecord", ">= 2.3", "<= 3.2"
   gem.add_development_dependency "rake"
+  gem.add_development_dependency "mysql"
 
   gem.summary = description = %q{Attach comments to your ActiveRecord queries.}
 end

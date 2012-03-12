@@ -11,16 +11,19 @@ ActiveRecord::Base.establish_connection({
   :database => "query_comments_test"
 })
 
-#ActiveSupport::LogSubscriber.colorize_logging = false
-#ActiveRecord::Base.logger = Logger.new(STDOUT)
-
 class Post < ActiveRecord::Base
+end
+
+class PostsController < ActionController::Base
+  def driver_only
+    ActiveRecord::Base.connection.execute "select id from posts"
+    render :nothing => true
+  end
 end
 
 unless Post.table_exists?
   ActiveRecord::Schema.define do
     create_table "posts", :force => true do |t|
-      t.string "body"
     end
   end
 end
@@ -33,10 +36,20 @@ class QueryCommentsTest < Test::Unit::TestCase
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
       @queries << args.last[:sql]
     end
+    @env = Rack::MockRequest.env_for('/')
   end
 
-  def test_blank_query
-    Post.count
-    assert_match %r{/\*\*/}, @queries.first
+  def test_query_commenting_on_mysql_driver_with_no_action
+    ActiveRecord::Base.connection.execute "select id from posts"
+    assert_match %r{select id from posts /\*\*/$}, @queries.first
+  end
+
+  def test_query_commenting_on_mysql_driver_with_action
+    PostsController.action(:driver_only).call(@env)
+    assert_match %r{select id from posts /\*application:BCX,controller:posts,action:driver_only\*/$}, @queries.first
+  end
+
+  def teardown
+    ActiveSupport::Notifications.unsubscribe "sql.active_record"
   end
 end
