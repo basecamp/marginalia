@@ -1,12 +1,12 @@
 Gem::Specification.new do |gem|
-  gem.authors       = ["Noah Lorang", "Nick Quaranto"]
+  gem.authors       = ["Noah Lorang", "Nick Quaranto", "Taylor Weibley"]
   gem.email         = ["noah@37signals.com"]
-  gem.homepage      = "https://github.com/37signals/query_comments"
+  gem.homepage      = "https://github.com/37signals/marginalia"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test}/*`.split("\n")
-  gem.name          = "query_comments"
+  gem.name          = "marginalia"
   gem.require_paths = ["lib"]
   gem.version       = "1.0.0"
 

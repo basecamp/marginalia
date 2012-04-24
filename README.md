@@ -1,4 +1,4 @@
-# query_comments
+# marginalia
 
 Attach comments to your ActiveRecord queries. By default, it adds the application, controller, and action names as a
 comment at the end of each query.
@@ -25,7 +25,7 @@ tested on Rails 2.3.5 through 3.2-stable. Patches are welcome for other database
 
 ### For Rails 3.x:
 
-    gem 'query_comments'
+    gem 'marginalia'
 
 Then `bundle`, and that's it!
 
@@ -35,22 +35,22 @@ If using cached externals, add to your `config/externals.yml` file.
 
 Or, if your prefer using `config.gem`, you can use:
 
-    config.gem 'query_comments'
+    config.gem 'marginalia'
 
 Finally, if bundled, you'll need to manually run the initialization step in an
 initializer, e.g.:
     
     # Gemfile
-    gem 'query_comments', :require => false
+    gem 'marginalia', :require => false
 
-    #config/initializers/query_comments.rb
-    require 'query_comments'
-    QueryComments::Railtie.insert
+    #config/initializers/marginalia.rb
+    require 'marginalia'
+    Marginalia::Railtie.insert
 
 ### Customization
-Optionally, you can set the application name shown in the log like so in an initializer (e.g. `config/initializers/query_comments.rb`):
+Optionally, you can set the application name shown in the log like so in an initializer (e.g. `config/initializers/marginalia.rb`):
 
-    QueryComments.application_name = "BCX"
+    Marginalia.application_name = "BCX"
 
 For Rails 3 applications, the name will default to your Rails application name.
 For Rails 2 applications, "rails" is used as the default application name.

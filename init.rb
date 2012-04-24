@@ -1,2 +1,2 @@
-require 'query_comments/railtie'
-QueryComments::Railtie.insert
+require 'marginalia/railtie'
+Marginalia::Railtie.insert

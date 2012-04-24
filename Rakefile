@@ -24,11 +24,11 @@ namespace :db do
 
   desc "create database"
   task :create do
-    sh 'mysql -u root -e "create database query_comments_test;"'
+    sh 'mysql -u root -e "create database marginalia_test;"'
   end
 
   desc "drop database"
   task :drop do
-    sh 'mysql -u root -e "drop database query_comments_test;"'
+    sh 'mysql -u root -e "drop database marginalia_test;"'
   end
 end

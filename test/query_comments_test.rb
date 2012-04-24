@@ -3,13 +3,13 @@ require 'logger'
 require 'pp'
 require 'active_record'
 require 'action_controller'
-require 'query_comments'
+require 'marginalia'
 
 ActiveRecord::Base.establish_connection({
   :adapter  => ENV["DRIVER"] || "mysql",
   :host     => "localhost",
   :username => "root",
-  :database => "query_comments_test"
+  :database => "marginalia_test"
 })
 
 class Post < ActiveRecord::Base
@@ -29,9 +29,9 @@ unless Post.table_exists?
   end
 end
 
-QueryComments::Railtie.insert
+Marginalia::Railtie.insert
 
-class QueryCommentsTest < Test::Unit::TestCase
+class MarginaliaTest < Test::Unit::TestCase
   def setup
     @queries = []
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
@@ -51,14 +51,14 @@ class QueryCommentsTest < Test::Unit::TestCase
   end
 
   def test_configuring_application
-    QueryComments.application_name = "customapp"
+    Marginalia.application_name = "customapp"
     PostsController.action(:driver_only).call(@env)
 
     assert_match %r{/\*application:customapp,controller:posts,action:driver_only\*/$}, @queries.first
   end
 
   def teardown
-    QueryComments.application_name = nil
+    Marginalia.application_name = nil
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
   end
 end
