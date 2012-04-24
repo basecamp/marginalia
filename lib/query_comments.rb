@@ -1,6 +1,3 @@
-require 'active_record'
-require 'action_controller'
-
 require 'query_comments/railtie'
 
 module QueryComments

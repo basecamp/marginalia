@@ -1,7 +1,8 @@
 require 'test/unit'
 require 'logger'
 require 'pp'
-
+require 'active_record'
+require 'action_controller'
 require 'query_comments'
 
 ActiveRecord::Base.establish_connection({

@@ -2,7 +2,7 @@ require 'query_comments'
 
 module QueryComments
   if defined? Rails::Railtie
-    require 'rails'
+    require 'rails/railtie'
 
     class Railtie < Rails::Railtie
       initializer 'query_comments.insert' do
