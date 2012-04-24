@@ -18,6 +18,9 @@ to automate identification of controllers and actions that are hotspots forslow 
 This gem was created at 37signals. You can read more about how we use it [on
 our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-rails).
 
+This has been tested and used in production with both the mysql and mysql2 gems, 
+tested on Rails 2.3.5 through 3.2-stable. Patches are welcome for other database adapters. 
+
 ## Installation
 
 ### For Rails 3.x:
@@ -52,10 +55,6 @@ Optionally, you can set the application name shown in the log like so in an init
 For Rails 3 applications, the name will default to your Rails application name.
 For Rails 2 applications, "rails" is used as the default application name.
 
-## Support
-
-mysql and mysql2 gems, tested on Rails 2.3.5 through 3.2-stable. Patches are welcome for other database adapters. 
-
 ## Contributing
 
 Start by bundling and creating the test database:
@@ -63,11 +62,7 @@ Start by bundling and creating the test database:
     bundle
     rake db:create
 
-Then, running `rake` will run the tests just on the original MySQL adapter:
+Then, running `rake` will run the tests on both the `mysql` and `mysql2` adapters:
 
     rake
-
-To run the test suite against both `mysql2` and the original adapter:
-
-    rake test:all
 
