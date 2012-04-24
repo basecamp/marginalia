@@ -6,7 +6,8 @@ module QueryComments
   module ActiveRecordInstrumentation
     def self.included(instrumented_class)
       instrumented_class.class_eval do
-        alias_method_chain :execute, :query_comments
+        alias_method :execute_without_query_comments, :execute
+        alias_method :execute, :execute_with_query_comments
       end
     end
 
