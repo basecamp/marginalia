@@ -20,13 +20,13 @@ our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-
 
 ## Installation
 
-For Rails 3.x:
+### For Rails 3.x:
 
     gem 'query_comments'
 
 Then `bundle`, and that's it!
 
-For Rails 2.x:
+### For Rails 2.x:
 
 If using cached externals, add to your `config/externals.yml` file.
 
@@ -44,6 +44,7 @@ initializer, e.g.:
     require 'query_comments'
     QueryComments::Railtie.insert
 
+### Customization
 Optionally, you can set the application name shown in the log like so in an initializer (e.g. `config/initializers/query_comments.rb`):
 
     QueryComments.application_name = "BCX"
