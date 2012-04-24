@@ -39,16 +39,15 @@ module QueryComments
       if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
         ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
           include QueryComments::ActiveRecordInstrumentation
-          include QueryComments::ArelInstrumentation
         end
       end
 
       if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
         ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
           include QueryComments::ActiveRecordInstrumentation
-          include QueryComments::ArelInstrumentation
         end
       end
+
     end
   end
 end

@@ -19,11 +19,6 @@ class PostsController < ActionController::Base
     ActiveRecord::Base.connection.execute "select id from posts"
     render :nothing => true
   end
-
-  def arel_only
-    Post.all
-    render :nothing => true
-  end
 end
 
 unless Post.table_exists?
@@ -52,16 +47,6 @@ class QueryCommentsTest < Test::Unit::TestCase
   def test_query_commenting_on_mysql_driver_with_action
     PostsController.action(:driver_only).call(@env)
     assert_match %r{select id from posts /\*application:rails,controller:posts,action:driver_only\*/$}, @queries.first
-  end
-
-  def test_query_commenting_on_arel_with_no_action
-    Post.count
-    assert_match %r{/\*\*/$}, @queries.last
-  end
-
-  def test_query_commenting_on_arel_with_action
-    PostsController.action(:arel_only).call(@env)
-    assert_match %r{SELECT `posts`\.\* FROM `posts`  /\*application:rails,controller:posts,action:arel_only\*/$}, @queries.last
   end
 
   def test_configuring_application
