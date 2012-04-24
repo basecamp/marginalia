@@ -12,7 +12,7 @@ For example, once enabled, your logs will look like:
     LIMIT 1 
     /*application:BCX,controller:project_imports,action:show*/
 
-You can also these query comments with a tool like [pt-query-digest](http://www.percona.com/doc/percona-toolkit/2.1/pt-query-digest.html#query-reviews) 
+You can also combine these query comments with a tool like [pt-query-digest](http://www.percona.com/doc/percona-toolkit/2.1/pt-query-digest.html#query-reviews) 
 to automate identification of controllers and actions that are hotspots forslow queries.
 
 This gem was created at 37signals. You can read more about how we use it [on
