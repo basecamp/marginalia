@@ -48,6 +48,12 @@ module Marginalia
         end
       end
 
+      if defined? ActiveRecord::ConnectionAdapters::SQLiteAdapter
+        ActiveRecord::ConnectionAdapters::SQLiteAdapter.module_eval do
+          include Marginalia::ActiveRecordInstrumentation
+        end
+      end
+
     end
   end
 end

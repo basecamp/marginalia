@@ -5,7 +5,7 @@ task :default => ['test:all']
 
 namespace :test do
   desc "test all drivers"
-  task :all => [:mysql, :mysql2]
+  task :all => [:mysql, :mysql2, :sqlite]
 
   desc "test mysql driver"
   task :mysql do
@@ -15,6 +15,11 @@ namespace :test do
   desc "test mysql2 driver"
   task :mysql2 do
     sh "DRIVER=mysql2 ruby -Ilib -Itest test/*_test.rb"
+  end
+  
+  desc "test sqlite3 driver"
+  task :sqlite do
+    sh "DRIVER=sqlite3 ruby -Ilib -Itest test/*_test.rb"
   end
 end
 
