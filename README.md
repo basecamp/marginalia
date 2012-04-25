@@ -19,7 +19,9 @@ This gem was created at 37signals. You can read more about how we use it [on
 our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-rails).
 
 This has been tested and used in production with both the mysql and mysql2 gems, 
-tested on Rails 2.3.5 through 3.2-stable. It has also been tesetd using the sqlite3 gem.
+tested on Rails 2.3.5 through 3.2-stable. It has also been tested using the sqlite3 gem.
+
+[![Build Status](https://secure.travis-ci.org/37signals/marginalia.png?branch=master)](http://travis-ci.org/37signals/marginalia)
 
 Patches are welcome for other database adapters. 
 
