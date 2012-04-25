@@ -8,7 +8,7 @@ require 'marginalia'
 ActiveRecord::Base.establish_connection({
   :adapter  => ENV["DRIVER"] || "mysql",
   :host     => "localhost",
-  :username => "root",
+  :username => ENV["DB_USERNAME"] || "root",
   :database => "marginalia_test"
 })
 
