@@ -34,6 +34,6 @@ namespace :db do
 
   desc "drop database"
   task :drop do
-    sh 'mysql -u root -e "drop database marginalia_test;"'
+    sh 'mysql -u root -e "drop database if exists marginalia_test;"'
   end
 end
