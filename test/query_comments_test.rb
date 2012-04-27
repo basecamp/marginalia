@@ -12,6 +12,8 @@ ActiveRecord::Base.establish_connection({
   :database => "marginalia_test"
 })
 
+RAILS_ROOT = __FILE__
+
 class Post < ActiveRecord::Base
 end
 
@@ -42,19 +44,19 @@ class MarginaliaTest < Test::Unit::TestCase
 
   def test_query_commenting_on_mysql_driver_with_no_action
     ActiveRecord::Base.connection.execute "select id from posts"
-    assert_match %r{select id from posts /\*\*/$}, @queries.first
+    assert_match %r{select id from posts /\* :46:in `test_query_commenting_on_mysql_driver_with_no_action' --  \*/$}, @queries.first
   end
 
   def test_query_commenting_on_mysql_driver_with_action
     PostsController.action(:driver_only).call(@env)
-    assert_match %r{select id from posts /\*application:rails,controller:posts,action:driver_only\*/$}, @queries.first
+    assert_match %r{select id from posts /\* :22:in `driver_only' -- application:rails,controller:posts,action:driver_only \*/$}, @queries.first
   end
 
   def test_configuring_application
     Marginalia.application_name = "customapp"
     PostsController.action(:driver_only).call(@env)
 
-    assert_match %r{/\*application:customapp,controller:posts,action:driver_only\*/$}, @queries.first
+    assert_match %r{/\* :22:in `driver_only' -- application:customapp,controller:posts,action:driver_only \*/$}, @queries.first
   end
 
   def teardown
