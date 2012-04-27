@@ -40,19 +40,25 @@ module Marginalia
         ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
           include Marginalia::ActiveRecordInstrumentation
         end
-      end
+      end rescue nil
 
       if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
         ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
           include Marginalia::ActiveRecordInstrumentation
         end
-      end
+      end rescue nil
 
       if defined? ActiveRecord::ConnectionAdapters::SQLiteAdapter
         ActiveRecord::ConnectionAdapters::SQLiteAdapter.module_eval do
           include Marginalia::ActiveRecordInstrumentation
         end
-      end
+      end rescue nil
+
+      if defined? ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
+        ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.module_eval do
+          include Marginalia::ActiveRecordInstrumentation
+        end
+      end rescue nil
 
     end
   end
