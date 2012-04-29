@@ -26,10 +26,10 @@ module Marginalia
     def self.insert_into_action_controller
       ActionController::Base.class_eval do
         def record_query_comment
-          Marginalia.comment = "application:#{Marginalia.application_name || "rails"},controller:#{controller_name},action:#{action_name}"
+          Marginalia::Comment.update!(self)
           yield
         ensure
-          Marginalia.comment = nil
+          Marginalia::Comment.clear! 
         end
         around_filter :record_query_comment
       end

@@ -57,8 +57,16 @@ class MarginaliaTest < Test::Unit::TestCase
     assert_match %r{/\*application:customapp,controller:posts,action:driver_only\*/$}, @queries.first
   end
 
+  def test_configuring_query_components
+    Marginalia::Comment.components = [:controller]
+    PostsController.action(:driver_only).call(@env)
+
+    assert_match %r{/\*controller:posts\*/$}, @queries.first
+  end
+
   def teardown
     Marginalia.application_name = nil
+    Marginalia::Comment.components = [:application, :controller, :action]
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
   end
 end
