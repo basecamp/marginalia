@@ -60,6 +60,35 @@ Optionally, you can set the application name shown in the log like so in an init
 For Rails 3 applications, the name will default to your Rails application name.
 For Rails 2 applications, "rails" is used as the default application name.
 
+You can also configure the components of the comment that will be appended,
+by setting `Marginalia::Comment.components`. By default, this is set to:
+
+    Marginalia::Comment.components = [:application, :controller, :action]
+
+Which results in a comment of
+`application:#{application_name},controller:#{controller.name},action:#{action_name}`.
+
+You can re-order or remove these components. You can also add additional
+comment components of your desire by defining new module methods for
+`Marginalia::Comment` which return a string. For example:
+
+    module Marginalia
+      module Comment
+        def self.mycommentcomponent
+          "TEST"
+        end
+      end
+    end
+
+    Marginalia::Comment.components = [:application, :mycommentcomponent]
+
+Which will result in a comment like
+`application:#{application_name},mycommentcomponent:TEST`
+The calling controller is available to these methods via `@controller`.
+
+Marginalia ships with `:application`, `:controller`, and `:action` enabled by
+default.
+
 ## Contributing
 
 Start by bundling and creating the test database:
