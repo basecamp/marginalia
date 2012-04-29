@@ -30,6 +30,9 @@ end
 
 namespace :db do
 
+  desc "reset all databases"
+  task :reset => [:"mysql:reset", :"postgresql:reset"]
+
   namespace :mysql do
     desc "reset MySQL database"
     task :reset => [:drop, :create]
