@@ -27,9 +27,12 @@ Patches are welcome for other database adapters.
 
 ### For Rails 3.x:
 
+    # Gemfile
     gem 'marginalia'
+    
+    #config/application.rb
+    require 'marginalia/railtie'
 
-Then `bundle`, and that's it!
 
 ### For Rails 2.x:
 
