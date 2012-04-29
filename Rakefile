@@ -59,7 +59,7 @@ namespace :db do
 
     desc "drop PostgreSQL database"
     task :drop do
-      sh 'dropdb -U postgres marginalia_test'
+      sh 'psql -d postgres -U postgres -c "DROP DATABASE IF EXISTS marginalia_test"'
     end
   end
 
