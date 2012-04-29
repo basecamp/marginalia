@@ -87,7 +87,10 @@ Which will result in a comment like
 The calling controller is available to these methods via `@controller`.
 
 Marginalia ships with `:application`, `:controller`, and `:action` enabled by
-default.
+default. In addition, implementation is provided for:
+  * `:line` (for file and line number calling query)
+
+Pull requests for other included comment components are welcome.
 
 ## Contributing
 
