@@ -75,7 +75,7 @@ class MarginaliaTest < Test::Unit::TestCase
     Marginalia::Comment.lines_to_ignore = /foo bar/
     Marginalia::Comment.components = [:line]
     PostsController.action(:driver_only).call(@env)
-    assert_match %r{/\*line:.*marginalia/lib/marginalia/comment.rb:7:in `block in update!'\*/$}, @queries.first
+    assert_match %r{/\*line:.*lib/marginalia/comment.rb:7:in .*?\*/$}, @queries.first
   end
 
   def teardown
