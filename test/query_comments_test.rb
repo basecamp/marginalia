@@ -71,6 +71,13 @@ class MarginaliaTest < Test::Unit::TestCase
     assert_match %r{/\*line:query_comments_test.rb:[0-9]*:in `call'\*/$}, @queries.first
   end
 
+  def test_last_line_component_with_lines_to_ignore
+    Marginalia::Comment.lines_to_ignore = /foo bar/
+    Marginalia::Comment.components = [:line]
+    PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*line:.*marginalia/lib/marginalia/comment.rb:7:in `block in update!'\*/$}, @queries.first
+  end
+
   def teardown
     Marginalia.application_name = nil
     Marginalia::Comment.components = [:application, :controller, :action]

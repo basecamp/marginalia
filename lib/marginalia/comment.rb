@@ -1,6 +1,6 @@
 module Marginalia
   module Comment
-    mattr_accessor :components, :comment
+    mattr_accessor :components, :comment, :lines_to_ignore
 
     def self.update!(controller = nil)
       @controller = controller
@@ -35,7 +35,8 @@ module Marginalia
       end
 
       def self.line
-        last_line = caller.detect { |line| line !~ /\.rvm|gem|vendor|marginalia|rbenv/ }
+        Marginalia::Comment.lines_to_ignore ||= /\.rvm|gem|vendor|marginalia|rbenv/
+        last_line = caller.detect { |line| line !~ Marginalia::Comment.lines_to_ignore }
         if last_line
           root = if defined?(Rails) && Rails.respond_to?(:root)
             Rails.root.to_s
