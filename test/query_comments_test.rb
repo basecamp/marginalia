@@ -4,7 +4,7 @@ require 'pp'
 require 'active_record'
 require 'action_controller'
 require 'marginalia'
-RAILS_ROOT = "test/" 
+RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 
 ActiveRecord::Base.establish_connection({
   :adapter  => ENV["DRIVER"] || "mysql",
@@ -68,7 +68,7 @@ class MarginaliaTest < Test::Unit::TestCase
   def test_last_line_component
     Marginalia::Comment.components = [:line]
     PostsController.action(:driver_only).call(@env)
-    assert_match %r{/\*line:query_comments_test.rb:[0-9]*:in `call'\*/$}, @queries.first
+    assert_match %r{/\*line:test/query_comments_test.rb:[0-9]*:in `call'\*/$}, @queries.first
   end
 
   def test_last_line_component_with_lines_to_ignore
