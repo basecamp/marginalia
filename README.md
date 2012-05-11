@@ -23,10 +23,10 @@ tested on Rails 2.3.5 through 3.2-stable. It has also been tested for sqlite3 an
 
 Patches are welcome for other database adapters. 
 
-** The preferred way to get support is to send an email to
+**The preferred way to get support is to send an email to
 marginalia@librelist.com. Github issues
 and pull requests will be checked occassionally, but email is the
-fastest way to get help. **
+fastest way to get help.**
 
 ## Installation
 
