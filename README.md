@@ -94,7 +94,7 @@ The calling controller is available to these methods via `@controller`.
 Marginalia ships with `:application`, `:controller`, and `:action` enabled by
 default. In addition, implementation is provided for:
   * `:line` (for file and line number calling query). :line supports
-    a configuration by setting a regexp in `Marignalia::Comment.lines_to_ignore`
+    a configuration by setting a regexp in `Marginalia::Comment.lines_to_ignore`
     to exclude parts of the stacktrace from inclusion in the line comment.
 
 Pull requests for other included comment components are welcome.
