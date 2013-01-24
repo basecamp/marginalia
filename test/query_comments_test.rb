@@ -75,7 +75,13 @@ class MarginaliaTest < Test::Unit::TestCase
     Marginalia::Comment.lines_to_ignore = /foo bar/
     Marginalia::Comment.components = [:line]
     PostsController.action(:driver_only).call(@env)
-    assert_match %r{/\*line:.*lib/marginalia/comment.rb:7:in .*?\*/$}, @queries.first
+    assert_match %r{/\*line:.*lib/marginalia/comment.rb:9:in .*?\*/$}, @queries.first
+  end
+
+  def test_hostname_and_pid
+    Marginalia::Comment.components = [:hostname, :pid]
+    PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*hostname:#{Socket.gethostname},pid:#{Process.pid}\*/$}, @queries.first
   end
 
   def teardown

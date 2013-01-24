@@ -1,3 +1,5 @@
+require 'socket'
+
 module Marginalia
   module Comment
     mattr_accessor :components, :comment, :lines_to_ignore
@@ -50,6 +52,14 @@ module Marginalia
           end
           last_line
         end
+      end
+
+      def self.hostname
+        @cached_hostname ||= Socket.gethostname
+      end
+
+      def self.pid
+        Process.pid
       end
 
   end
