@@ -11,7 +11,9 @@ module Marginalia
         if defined? :execute
           alias_method :execute_without_marginalia, :execute
           alias_method :execute, :execute_with_marginalia
-        elsif defined? :exec_query
+        end
+
+        if defined? :exec_query
           alias_method :exec_query_without_marginalia, :exec_query
           alias_method :exec_query, :exec_query_with_marginalia
         end
