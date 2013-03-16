@@ -12,11 +12,29 @@ module Marginalia
           alias_method :execute_without_marginalia, :execute
           alias_method :execute, :execute_with_marginalia
         end
+
+        if defined? :exec_query
+          alias_method :exec_query_without_marginalia, :exec_query
+          alias_method :exec_query, :exec_query_with_marginalia
+        end
+      end
+    end
+
+    def annotate_sql(sql)
+      comment = Marginalia::Comment.construct_comment
+      if comment.present?
+        "#{sql} /*#{comment}*/"
+      else
+        sql
       end
     end
 
     def execute_with_marginalia(sql, name = nil)
-      execute_without_marginalia("#{sql} /*#{Marginalia::Comment.to_s}*/", name)
+      execute_without_marginalia(annotate_sql(sql), name)
+    end
+
+    def exec_query_with_marginalia(sql, name = 'SQL', binds = [])
+      exec_query_without_marginalia(annotate_sql(sql), name, binds)
     end
   end
 

@@ -43,7 +43,7 @@ class MarginaliaTest < Test::Unit::TestCase
 
   def test_query_commenting_on_mysql_driver_with_no_action
     ActiveRecord::Base.connection.execute "select id from posts"
-    assert_match %r{select id from posts /\*\*/$}, @queries.first
+    assert_match %r{select id from posts /\*application:rails\*/$}, @queries.first
   end
 
   def test_query_commenting_on_mysql_driver_with_action
@@ -68,20 +68,27 @@ class MarginaliaTest < Test::Unit::TestCase
   def test_last_line_component
     Marginalia::Comment.components = [:line]
     PostsController.action(:driver_only).call(@env)
-    assert_match %r{/\*line:test/query_comments_test.rb:[0-9]*:in `call'\*/$}, @queries.first
+
+    # Because "lines_to_ignore" by default includes "marginalia" and "gem", the
+    # extracted line line will be from the line in this file that actually
+    # triggers the query.
+    assert_match %r{/\*line:test/query_comments_test.rb:[0-9]+:in `driver_only'\*/$}, @queries.first
   end
 
   def test_last_line_component_with_lines_to_ignore
     Marginalia::Comment.lines_to_ignore = /foo bar/
     Marginalia::Comment.components = [:line]
     PostsController.action(:driver_only).call(@env)
-    assert_match %r{/\*line:.*lib/marginalia/comment.rb:9:in .*?\*/$}, @queries.first
+    # Because "lines_to_ignore" does not include "marginalia", the extracted
+    # line will be from marginalia/comment.rb.
+    assert_match %r{/\*line:.*lib/marginalia/comment.rb:[0-9]+}, @queries.first
   end
 
   def test_hostname_and_pid
     Marginalia::Comment.components = [:hostname, :pid]
     PostsController.action(:driver_only).call(@env)
     assert_match %r{/\*hostname:#{Socket.gethostname},pid:#{Process.pid}\*/$}, @queries.first
+
   end
 
   def teardown
