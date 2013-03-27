@@ -79,6 +79,7 @@ class MarginaliaTest < Test::Unit::TestCase
     Marginalia::Comment.lines_to_ignore = /foo bar/
     Marginalia::Comment.components = [:line]
     PostsController.action(:driver_only).call(@env)
+
     # Because "lines_to_ignore" does not include "marginalia", the extracted
     # line will be from marginalia/comment.rb.
     assert_match %r{/\*line:.*lib/marginalia/comment.rb:[0-9]+}, @queries.first
@@ -88,7 +89,6 @@ class MarginaliaTest < Test::Unit::TestCase
     Marginalia::Comment.components = [:hostname, :pid]
     PostsController.action(:driver_only).call(@env)
     assert_match %r{/\*hostname:#{Socket.gethostname},pid:#{Process.pid}\*/$}, @queries.first
-
   end
 
   def teardown
