@@ -85,6 +85,12 @@ class MarginaliaTest < Test::Unit::TestCase
     assert_match %r{/\*line:.*lib/marginalia/comment.rb:[0-9]+}, @queries.first
   end
 
+  def test_hostname_and_pid
+    Marginalia::Comment.components = [:hostname, :pid]
+    PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*hostname:#{Socket.gethostname},pid:#{Process.pid}\*/$}, @queries.first
+  end
+
   def teardown
     Marginalia.application_name = nil
     Marginalia::Comment.components = [:application, :controller, :action]

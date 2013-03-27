@@ -1,3 +1,5 @@
+require 'socket'
+
 module Marginalia
   module Comment
     mattr_accessor :components, :lines_to_ignore
@@ -12,7 +14,7 @@ module Marginalia
         component_value = self.send(c)
         if component_value.present?
           ret << ',' if ret.present?
-          ret << c.to_s << ':' << component_value
+          ret << c.to_s << ':' << component_value.to_s
         end
       end
       ret
@@ -59,6 +61,14 @@ module Marginalia
           end
           last_line
         end
+      end
+
+      def self.hostname
+        @cached_hostname ||= Socket.gethostname
+      end
+
+      def self.pid
+        Process.pid
       end
 
   end
