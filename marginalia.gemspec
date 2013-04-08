@@ -6,9 +6,9 @@ Gem::Specification.new do |gem|
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test}/*`.split("\n")
-  gem.name          = "marginalia"
+  gem.name          = "instructure-marginalia"
   gem.require_paths = ["lib"]
-  gem.version       = "1.1.2"
+  gem.version       = "1.1.3"
 
   gem.add_runtime_dependency "actionpack", ">= 2.3", "< 3.3"
   gem.add_runtime_dependency "activerecord", ">= 2.3", "< 3.3"
