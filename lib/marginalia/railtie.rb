@@ -68,6 +68,14 @@ module Marginalia
           end
         end
       end
+
+      if defined? ActiveRecord::ConnectionAdapters::SQLServerAdapter
+        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLServerAdapter)
+          ActiveRecord::ConnectionAdapters::SQLServerAdapter.module_eval do
+            include Marginalia::ActiveRecordInstrumentation
+          end
+        end
+      end
     end
   end
 end
