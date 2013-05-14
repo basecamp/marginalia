@@ -71,6 +71,9 @@ module Marginalia
         Process.pid
       end
 
+      def self.request_uuid
+        @controller.request.uuid
+      end
   end
 
 end
