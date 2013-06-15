@@ -23,6 +23,10 @@ module Marginalia
       insert_into_action_controller
     end
 
+    def self.config_override?
+      ActiveRecord::Base.connection_config[:use_marginalia]
+    end
+    
     def self.insert_into_action_controller
       ActionController::Base.class_eval do
         def record_query_comment
@@ -37,7 +41,7 @@ module Marginalia
 
     def self.insert_into_active_record
       if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::Mysql2Adapter)
+        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::Mysql2Adapter) || config_override?
           ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
             include Marginalia::ActiveRecordInstrumentation
           end
@@ -45,7 +49,7 @@ module Marginalia
       end
 
       if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::MysqlAdapter)
+        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::MysqlAdapter) || config_override?
           ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
             include Marginalia::ActiveRecordInstrumentation
           end
@@ -54,7 +58,7 @@ module Marginalia
 
       # SQL queries made through PostgreSQLAdapter#exec_delete will not be annotated.
       if defined? ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
+        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) || config_override?
           ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.module_eval do
             include Marginalia::ActiveRecordInstrumentation
           end
@@ -62,7 +66,7 @@ module Marginalia
       end
 
       if defined? ActiveRecord::ConnectionAdapters::SQLiteAdapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLiteAdapter)
+        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLiteAdapter) || config_override?
           ActiveRecord::ConnectionAdapters::SQLiteAdapter.module_eval do
             include Marginalia::ActiveRecordInstrumentation
           end
