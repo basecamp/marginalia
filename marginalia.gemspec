@@ -9,6 +9,7 @@ Gem::Specification.new do |gem|
   gem.name          = "marginalia"
   gem.require_paths = ["lib"]
   gem.version       = "1.1.2"
+  gem.license       = "MIT"
 
   gem.add_runtime_dependency "actionpack", ">= 2.3", "< 3.3"
   gem.add_runtime_dependency "activerecord", ">= 2.3", "< 3.3"
