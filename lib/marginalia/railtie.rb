@@ -29,7 +29,7 @@ module Marginalia
           Marginalia::Comment.update!(self)
           yield
         ensure
-          Marginalia::Comment.clear! 
+          Marginalia::Comment.clear!
         end
         around_filter :record_query_comment
       end
@@ -61,9 +61,9 @@ module Marginalia
         end
       end
 
-      if defined? ActiveRecord::ConnectionAdapters::SQLiteAdapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLiteAdapter)
-          ActiveRecord::ConnectionAdapters::SQLiteAdapter.module_eval do
+      if defined? ActiveRecord::ConnectionAdapters::SQLite3Adapter
+        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLite3Adapter)
+          ActiveRecord::ConnectionAdapters::SQLite3Adapter.module_eval do
             include Marginalia::ActiveRecordInstrumentation
           end
         end
