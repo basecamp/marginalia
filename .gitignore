@@ -2,3 +2,4 @@
 .bundle
 tmp
 marginalia_test
+Gemfile.lock
