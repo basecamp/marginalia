@@ -20,6 +20,10 @@ class PostsController < ActionController::Base
   def driver_only
     ActiveRecord::Base.connection.execute "select id from posts"
     render :nothing => true
+  end  
+  def []
+    ActiveRecord::Base.connection.execute "select id from posts"
+    render :nothing => true    
   end
 end
 
@@ -74,6 +78,17 @@ class MarginaliaTest < Test::Unit::TestCase
     # triggers the query.
     assert_match %r{/\*line:test/query_comments_test.rb:[0-9]+:in `driver_only'\*/$}, @queries.first
   end
+
+  def test_last_line_component_escaping
+    Marginalia::Comment.components = [:line]
+    PostsController.action(:[]).call(@env)
+
+    # Because "lines_to_ignore" by default includes "marginalia" and "gem", the
+    # extracted line line will be from the line in this file that actually
+    # triggers the query.
+    assert_match %r{/\*line:test/query_comments_test.rb:[0-9]+:in `\[\]'\*/$}, @queries.first
+  end
+
 
   def test_last_line_component_with_lines_to_ignore
     Marginalia::Comment.lines_to_ignore = /foo bar/
