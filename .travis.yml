@@ -3,4 +3,10 @@ rvm:
   - 1.8.7
   - 1.9.2
   - 1.9.3
+  - 2.0.0
+gemfile:
+  - test/gemfiles/activerecord2.3
+  - test/gemfiles/activerecord3.0
+  - test/gemfiles/activerecord3.1
+  - test/gemfiles/activerecord3.2
 script: bundle exec rake db:reset test:all

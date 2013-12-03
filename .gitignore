@@ -1,5 +1,7 @@
+Gemfile.lock
 *.gem
 .bundle
+.ruby-version
 tmp
 marginalia_test
 Gemfile.lock
