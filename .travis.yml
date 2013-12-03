@@ -4,17 +4,16 @@ rvm:
   - 1.9.2
   - 1.9.3
   - 2.0.0
+  - ruby-head
 script: bundle exec rake db:reset test:all
-
 env:
   - "RAILS_VERSION=3.2.15"
   - "RAILS_VERSION=4.0.1"
-
 matrix:
+  allow_failures:
+    - rvm: ruby-head
   exclude:
     - rvm: 1.8.7
       env: "RAILS_VERSION=4.0.1"
     - rvm: 1.9.2
-      env: "RAILS_VERSION=4.0.1"
-    - rvm: 1.9.3
       env: "RAILS_VERSION=4.0.1"
