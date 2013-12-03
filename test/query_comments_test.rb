@@ -47,7 +47,7 @@ class MarginaliaTest < Test::Unit::TestCase
     assert_match %r{select id from posts /\*application:rails\*/$}, @queries.first
   end
 
-  if "mysql" == ENV["DRIVER"]
+  if ENV["DRIVER"] =~ /^mysql/
     def test_query_commenting_on_mysql_driver_with_binary_chars
       ActiveRecord::Base.connection.execute "select id from posts /* \x81\x80\u0010\ */"
       assert_equal "select id from posts /* \x81\x80\u0010 */ /*application:rails*/", @queries.first
