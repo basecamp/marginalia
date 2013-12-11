@@ -40,11 +40,11 @@ module Marginalia
       end
 
       def self.action
-        @controller.action_name if @controller.respond_to? :action_name 
+        @controller.action_name if @controller.respond_to? :action_name
       end
 
       def self.line
-        Marginalia::Comment.lines_to_ignore ||= /\.rvm|gem|vendor|marginalia|rbenv/
+        Marginalia::Comment.lines_to_ignore ||= /\.rvm|gem|vendor\/|marginalia|rbenv/
         last_line = caller.detect do |line|
           line !~ Marginalia::Comment.lines_to_ignore
         end
