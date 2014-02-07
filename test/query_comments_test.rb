@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'test/unit'
+require 'mocha/test_unit'
 require 'logger'
 require 'pp'
 require 'active_record'
@@ -40,6 +41,13 @@ class MarginaliaTest < Test::Unit::TestCase
       @queries << args.last[:sql]
     end
     @env = Rack::MockRequest.env_for('/')
+  end
+
+  def test_double_annotate
+    ActiveRecord::Base.connection.expects(:annotate_sql).returns("select id from posts").once
+    ActiveRecord::Base.connection.send(:select, "select id from posts")
+  ensure
+    ActiveRecord::Base.connection.unstub(:annotate_sql)
   end
 
   def test_query_commenting_on_mysql_driver_with_no_action
