@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
-version = ENV["RAILS_VERSION"] || "3.2.15"
+version = ENV["RAILS_VERSION"] || "4.0.2"
 
 rails = case version
 when "master"
