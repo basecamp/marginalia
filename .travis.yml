@@ -5,5 +5,7 @@ rvm:
   - 2.1.0
 script: bundle exec rake db:reset test:all
 env:
-  - "RAILS_VERSION=3.2.15"
+  - "RAILS_VERSION=3.0.20"
+  - "RAILS_VERSION=3.1.12"
+  - "RAILS_VERSION=3.2.16"
   - "RAILS_VERSION=4.0.1"
