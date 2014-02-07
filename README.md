@@ -1,4 +1,4 @@
-# marginalia [![Build Status](https://secure.travis-ci.org/37signals/marginalia.png?branch=master)](http://travis-ci.org/37signals/marginalia)
+# marginalia [![Build Status](https://secure.travis-ci.org/basecamp/marginalia.png?branch=master)](http://travis-ci.org/basecamp/marginalia)
 
 Attach comments to your ActiveRecord queries. By default, it adds the application, controller, and action names as a
 comment at the end of each query.
