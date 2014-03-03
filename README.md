@@ -30,7 +30,7 @@ Patches are welcome for other database adapters.
     # Gemfile
     gem 'marginalia'
     
-    #config/application.rb
+    # config/application.rb
     require 'marginalia/railtie'
 
 
