@@ -2,9 +2,9 @@ language: ruby
 rvm:
   - 1.9.3
   - 2.0.0
-  - 2.1.0
+  - 2.1
 script: bundle exec rake db:reset test:all
 env:
   - "RAILS_VERSION=3.1.12"
-  - "RAILS_VERSION=3.2.16"
-  - "RAILS_VERSION=4.0.2"
+  - "RAILS_VERSION=3.2.19"
+  - "RAILS_VERSION=4.0.8"
