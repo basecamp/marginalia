@@ -62,6 +62,22 @@ class MarginaliaTest < Test::Unit::TestCase
     end
   end
 
+  if ENV["DRIVER"] =~ /^postgres/
+    def test_query_commenting_on_postgres_update
+      ActiveRecord::Base.connection.expects(:annotate_sql).returns("update posts set id = 1").once
+      ActiveRecord::Base.connection.send(:exec_update, "update posts set id = 1")
+    ensure
+      ActiveRecord::Base.connection.unstub(:annotate_sql)
+    end
+
+    def test_query_commenting_on_postgres_delete
+      ActiveRecord::Base.connection.expects(:annotate_sql).returns("delete from posts where id = 1").once
+      ActiveRecord::Base.connection.send(:exec_delete, "delete from posts where id = 1")
+    ensure
+      ActiveRecord::Base.connection.unstub(:annotate_sql)
+    end
+  end
+
   def test_query_commenting_on_mysql_driver_with_action
     PostsController.action(:driver_only).call(@env)
     assert_match %r{select id from posts /\*application:rails,controller:posts,action:driver_only\*/$}, @queries.first

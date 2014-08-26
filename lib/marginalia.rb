@@ -22,6 +22,21 @@ module Marginalia
             alias_method :exec_query, :exec_query_with_marginalia
           end
         end
+
+        is_postgres = defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
+          ActiveRecord::ConnectionAdapters::PostgreSQLAdapter == instrumented_class
+        # Instrument exec_delete and exec_update on AR 3.2+, since they don't
+        # call execute internally
+        if is_postgres && ActiveRecord::VERSION::STRING > "3.1"
+          if instrumented_class.method_defined?(:exec_delete)
+            alias_method :exec_delete_without_marginalia, :exec_delete
+            alias_method :exec_delete, :exec_delete_with_marginalia
+          end
+          if instrumented_class.method_defined?(:exec_update)
+            alias_method :exec_update_without_marginalia, :exec_update
+            alias_method :exec_update, :exec_update_with_marginalia
+          end
+        end
       end
     end
 
@@ -40,6 +55,14 @@ module Marginalia
 
     def exec_query_with_marginalia(sql, name = 'SQL', binds = [])
       exec_query_without_marginalia(annotate_sql(sql), name, binds)
+    end
+
+    def exec_delete_with_marginalia(sql, name = 'SQL', binds = [])
+      exec_delete_without_marginalia(annotate_sql(sql), name, binds)
+    end
+
+    def exec_update_with_marginalia(sql, name = 'SQL', binds = [])
+      exec_update_without_marginalia(annotate_sql(sql), name, binds)
     end
   end
 
