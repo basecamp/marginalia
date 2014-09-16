@@ -24,7 +24,7 @@ module Marginalia
     end
 
     def self.insert_into_action_controller
-      ActionController::Base.class_eval do
+      controller_instrumentation = <<-EOS
         def record_query_comment
           Marginalia::Comment.update!(self)
           yield
@@ -32,6 +32,10 @@ module Marginalia
           Marginalia::Comment.clear!
         end
         around_filter :record_query_comment
+      EOS
+      ActionController::Base.class_eval(controller_instrumentation)
+      if defined? ActionController::API
+        ActionController::API.class_eval(controller_instrumentation)
       end
     end
 
