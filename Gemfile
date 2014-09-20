@@ -12,3 +12,4 @@ else
 end
 
 gem "rails", rails
+gem "rails-api", "0.2.1"

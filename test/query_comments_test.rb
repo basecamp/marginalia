@@ -5,6 +5,9 @@ require 'logger'
 require 'pp'
 require 'active_record'
 require 'action_controller'
+require 'rails/version'
+require 'rails-api/action_controller/api'
+
 require 'marginalia'
 RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 
@@ -29,6 +32,13 @@ module API
   module V1
     class PostsController < ::PostsController
     end
+  end
+end
+
+class PostsApiController < ActionController::API
+  def driver_only
+    ActiveRecord::Base.connection.execute "select id from posts"
+    head :no_content
   end
 end
 
@@ -71,21 +81,27 @@ class MarginaliaTest < Test::Unit::TestCase
 
   def test_query_commenting_on_mysql_driver_with_action
     PostsController.action(:driver_only).call(@env)
+    PostsApiController.action(:driver_only).call(@env)
     assert_match %r{select id from posts /\*application:rails,controller:posts,action:driver_only\*/$}, @queries.first
+    assert_match %r{select id from posts /\*application:rails,controller:posts_api,action:driver_only\*/$}, @queries.second
   end
 
   def test_configuring_application
     Marginalia.application_name = "customapp"
     PostsController.action(:driver_only).call(@env)
+    PostsApiController.action(:driver_only).call(@env)
 
     assert_match %r{/\*application:customapp,controller:posts,action:driver_only\*/$}, @queries.first
+    assert_match %r{/\*application:customapp,controller:posts_api,action:driver_only\*/$}, @queries.second
   end
 
   def test_configuring_query_components
     Marginalia::Comment.components = [:controller]
     PostsController.action(:driver_only).call(@env)
+    PostsApiController.action(:driver_only).call(@env)
 
     assert_match %r{/\*controller:posts\*/$}, @queries.first
+    assert_match %r{/\*controller:posts_api\*/$}, @queries.second
   end
 
   def test_last_line_component
