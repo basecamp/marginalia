@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 require 'rails/version'
+
 def using_rails_api?
   ENV["TEST_RAILS_API"] == true
+end
+
+def request_id_available?
+  Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('3.2')
 end
 
 require "minitest/autorun"
@@ -10,6 +15,14 @@ require 'logger'
 require 'pp'
 require 'active_record'
 require 'action_controller'
+
+if request_id_available?
+  require 'action_dispatch/middleware/request_id'
+end
+
+if using_rails_api?
+  require 'rails-api/action_controller/api'
+end
 
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
@@ -23,13 +36,8 @@ if defined?(Rails) && !defined?(Rails.env)
   end
 end
 
-if using_rails_api?
-  require 'rails-api/action_controller/api'
-end
-
 require 'marginalia'
 RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
-
 
 ActiveRecord::Base.establish_connection({
   :adapter  => ENV["DRIVER"] || "mysql",
@@ -163,6 +171,28 @@ class MarginaliaTest < MiniTest::Test
     Marginalia::Comment.components = [:controller_with_namespace]
     API::V1::PostsController.action(:driver_only).call(@env)
     assert_match %r{/\*controller_with_namespace:API::V1::PostsController}, @queries.first
+  end
+
+  if request_id_available?
+    def test_request_id
+      @env["action_dispatch.request_id"] = "some-uuid"
+      Marginalia::Comment.components = [:request_id]
+      PostsController.action(:driver_only).call(@env)
+      assert_match %r{/\*request_id:some-uuid.*}, @queries.first
+
+      if using_rails_api?
+        PostsApiController.action(:driver_only).call(@env)
+        assert_match %r{/\*request_id:some-uuid.*}, @queries.second
+      end
+    end
+
+  else
+    def test_request_id_is_noop_on_old_rails
+      @env["action_dispatch.request_id"] = "some-uuid"
+      Marginalia::Comment.components = [:request_id]
+      PostsController.action(:driver_only).call(@env)
+      assert_match %r{^select id from posts$}, @queries.first
+    end
   end
 
   def teardown

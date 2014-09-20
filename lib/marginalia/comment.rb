@@ -76,6 +76,11 @@ module Marginalia
         Process.pid
       end
 
+      def self.request_id
+        if @controller.respond_to?(:request) && @controller.request.respond_to?(:uuid)
+          @controller.request.uuid
+        end
+      end
   end
 
 end
