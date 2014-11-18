@@ -25,6 +25,13 @@ class PostsController < ActionController::Base
   end
 end
 
+module API
+  module V1
+    class PostsController < ::PostsController
+    end
+  end
+end
+
 unless Post.table_exists?
   ActiveRecord::Schema.define do
     create_table "posts", :force => true do |t|
@@ -104,7 +111,12 @@ class MarginaliaTest < Test::Unit::TestCase
     Marginalia::Comment.components = [:hostname, :pid]
     PostsController.action(:driver_only).call(@env)
     assert_match %r{/\*hostname:#{Socket.gethostname},pid:#{Process.pid}\*/$}, @queries.first
+  end
 
+  def test_controller_with_namespace
+    Marginalia::Comment.components = [:controller_with_namespace]
+    API::V1::PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*controller_with_namespace:API::V1::PostsController}, @queries.first
   end
 
   def teardown

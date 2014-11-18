@@ -39,6 +39,10 @@ module Marginalia
         @controller.controller_name if @controller.respond_to? :controller_name
       end
 
+      def self.controller_with_namespace
+        @controller.class.name if @controller
+      end
+
       def self.action
         @controller.action_name if @controller.respond_to? :action_name
       end
