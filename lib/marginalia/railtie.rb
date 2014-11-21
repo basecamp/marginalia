@@ -37,35 +37,27 @@ module Marginalia
 
     def self.insert_into_active_record
       if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::Mysql2Adapter)
-          ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
-            include Marginalia::ActiveRecordInstrumentation
-          end
+        ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
+          include Marginalia::ActiveRecordInstrumentation
         end
       end
 
       if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::MysqlAdapter)
-          ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
-            include Marginalia::ActiveRecordInstrumentation
-          end
+        ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
+          include Marginalia::ActiveRecordInstrumentation
         end
       end
 
       # SQL queries made through PostgreSQLAdapter#exec_delete will not be annotated.
       if defined? ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
-          ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.module_eval do
-            include Marginalia::ActiveRecordInstrumentation
-          end
+        ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.module_eval do
+          include Marginalia::ActiveRecordInstrumentation
         end
       end
 
       if defined? ActiveRecord::ConnectionAdapters::SQLite3Adapter
-        if ActiveRecord::Base.connection.is_a?(ActiveRecord::ConnectionAdapters::SQLite3Adapter)
-          ActiveRecord::ConnectionAdapters::SQLite3Adapter.module_eval do
-            include Marginalia::ActiveRecordInstrumentation
-          end
+        ActiveRecord::ConnectionAdapters::SQLite3Adapter.module_eval do
+          include Marginalia::ActiveRecordInstrumentation
         end
       end
     end
