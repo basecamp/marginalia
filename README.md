@@ -91,6 +91,8 @@ default. In addition, implementation is provided for:
   * `:line` (for file and line number calling query). :line supports
     a configuration by setting a regexp in `Marginalia::Comment.lines_to_ignore`
     to exclude parts of the stacktrace from inclusion in the line comment.
+  * `:controller_with_namespace` to include the full classname (including namespace)
+    of the controller.
 
 Pull requests for other included comment components are welcome.
 
