@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'rails/version'
 def using_rails_api?
-  rails_major = Rails::VERSION::MAJOR
-  rails_minor = Rails::VERSION::MINOR
-  (rails_major == 3 && rails_minor == 2) || rails_major >= 4
+  ENV["TEST_RAILS_API"] == true
 end
 
 require 'test/unit'
