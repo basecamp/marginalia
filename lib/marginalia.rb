@@ -6,7 +6,6 @@ module Marginalia
 
   module ActiveRecordInstrumentation
     def self.included(instrumented_class)
-      Marginalia::Comment.components ||= [:application, :controller, :action]
       instrumented_class.class_eval do
         if instrumented_class.method_defined?(:execute)
           alias_method :execute_without_marginalia, :execute
