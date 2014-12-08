@@ -1,12 +1,23 @@
 # -*- coding: utf-8 -*-
+require 'rails/version'
+def using_rails_api?
+  ENV["TEST_RAILS_API"] == true
+end
+
 require 'test/unit'
 require 'mocha/test_unit'
 require 'logger'
 require 'pp'
 require 'active_record'
 require 'action_controller'
+
+if using_rails_api?
+  require 'rails-api/action_controller/api'
+end
+
 require 'marginalia'
 RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
+
 
 ActiveRecord::Base.establish_connection({
   :adapter  => ENV["DRIVER"] || "mysql",
@@ -28,6 +39,15 @@ end
 module API
   module V1
     class PostsController < ::PostsController
+    end
+  end
+end
+
+if using_rails_api?
+  class PostsApiController < ActionController::API
+    def driver_only
+      ActiveRecord::Base.connection.execute "select id from posts"
+      head :no_content
     end
   end
 end
@@ -72,20 +92,33 @@ class MarginaliaTest < Test::Unit::TestCase
   def test_query_commenting_on_mysql_driver_with_action
     PostsController.action(:driver_only).call(@env)
     assert_match %r{select id from posts /\*application:rails,controller:posts,action:driver_only\*/$}, @queries.first
+
+    if using_rails_api?
+      PostsApiController.action(:driver_only).call(@env)
+      assert_match %r{select id from posts /\*application:rails,controller:posts_api,action:driver_only\*/$}, @queries.second
+    end
   end
 
   def test_configuring_application
     Marginalia.application_name = "customapp"
     PostsController.action(:driver_only).call(@env)
-
     assert_match %r{/\*application:customapp,controller:posts,action:driver_only\*/$}, @queries.first
+
+    if using_rails_api?
+      PostsApiController.action(:driver_only).call(@env)
+      assert_match %r{/\*application:customapp,controller:posts_api,action:driver_only\*/$}, @queries.second
+    end
   end
 
   def test_configuring_query_components
     Marginalia::Comment.components = [:controller]
     PostsController.action(:driver_only).call(@env)
-
     assert_match %r{/\*controller:posts\*/$}, @queries.first
+
+    if using_rails_api?
+      PostsApiController.action(:driver_only).call(@env)
+      assert_match %r{/\*controller:posts_api\*/$}, @queries.second
+    end
   end
 
   def test_last_line_component
