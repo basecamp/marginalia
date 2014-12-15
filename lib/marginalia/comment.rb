@@ -27,7 +27,7 @@ module Marginalia
 
     private
       def self.application
-        if defined?(Rails.application) && Rails.application.present?
+        if defined?(Rails.application)
           Marginalia.application_name ||= Rails.application.class.name.split("::").first
         else
           Marginalia.application_name ||= "rails"

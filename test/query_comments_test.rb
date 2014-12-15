@@ -4,21 +4,24 @@ def using_rails_api?
   ENV["TEST_RAILS_API"] == true
 end
 
-def using_new_minitest?
-  Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('4.1')
-end
-
-if using_new_minitest?
-  require "minitest/autorun"
-else
-  require "test/unit"
-end
+require "minitest/autorun"
 require 'mocha/test_unit'
 require 'logger'
 require 'pp'
 require 'active_record'
 require 'action_controller'
-require 'rails'
+
+# Shim for compatibility with older versions of MiniTest
+MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
+
+# From version 4.1, ActiveRecord expects `Rails.env` to be
+# defined if `Rails` is defined
+if defined?(Rails) && !defined?(Rails.env)
+  module Rails
+    def self.env
+    end
+  end
+end
 
 if using_rails_api?
   require 'rails-api/action_controller/api'
@@ -70,13 +73,8 @@ end
 
 Marginalia::Railtie.insert
 
-if using_new_minitest?
-  TestRunnerClass = MiniTest::Test
-else
-  TestRunnerClass = Test::Unit::TestCase
-end
 
-class MarginaliaTest < TestRunnerClass
+class MarginaliaTest < MiniTest::Test
   def setup
     @queries = []
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
