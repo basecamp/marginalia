@@ -4,12 +4,24 @@ def using_rails_api?
   ENV["TEST_RAILS_API"] == true
 end
 
-require 'test/unit'
+require "minitest/autorun"
 require 'mocha/test_unit'
 require 'logger'
 require 'pp'
 require 'active_record'
 require 'action_controller'
+
+# Shim for compatibility with older versions of MiniTest
+MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
+
+# From version 4.1, ActiveRecord expects `Rails.env` to be
+# defined if `Rails` is defined
+if defined?(Rails) && !defined?(Rails.env)
+  module Rails
+    def self.env
+    end
+  end
+end
 
 if using_rails_api?
   require 'rails-api/action_controller/api'
@@ -61,7 +73,8 @@ end
 
 Marginalia::Railtie.insert
 
-class MarginaliaTest < Test::Unit::TestCase
+
+class MarginaliaTest < MiniTest::Test
   def setup
     @queries = []
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
@@ -154,6 +167,7 @@ class MarginaliaTest < Test::Unit::TestCase
 
   def teardown
     Marginalia.application_name = nil
+    Marginalia::Comment.lines_to_ignore = nil
     Marginalia::Comment.components = [:application, :controller, :action]
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
   end
