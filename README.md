@@ -101,9 +101,10 @@ Pull requests for other included comment components are welcome.
 Start by bundling and creating the test database:
 
     bundle
-    rake db:create
+    rake db:mysql:create
+    rake db:postgresql:create
 
-Then, running `rake` will run the tests on both the `mysql` and `mysql2` adapters:
+Then, running `rake` will run the tests on all the database adapters (`mysql`, `mysql2`, `postgresql` and `sqlite`):
 
     rake
 
