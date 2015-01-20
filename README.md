@@ -13,7 +13,7 @@ For example, once enabled, your logs will look like:
     /*application:BCX,controller:project_imports,action:show*/
 
 You can also use these query comments along with a tool like [pt-query-digest](http://www.percona.com/doc/percona-toolkit/2.1/pt-query-digest.html#query-reviews) 
-to automate identification of controllers and actions that are hotspots forslow queries.
+to automate identification of controllers and actions that are hotspots for slow queries.
 
 This gem was created at 37signals. You can read more about how we use it [on
 our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-rails).
