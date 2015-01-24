@@ -42,4 +42,18 @@ module Marginalia
     end
   end
 
+  module ActionControllerInstrumentation
+    def self.included(instrumented_class)
+      instrumented_class.class_eval do
+        around_filter :record_query_comment
+      end
+    end
+
+    def record_query_comment
+      Marginalia::Comment.update!(self)
+      yield
+    ensure
+      Marginalia::Comment.clear!
+    end
+  end
 end
