@@ -9,6 +9,10 @@ module Marginalia
       self.marginalia_controller = controller
     end
 
+    def self.update_job!(job)
+      self.marginalia_job = job
+    end
+
     def self.construct_comment
       ret = ''
       self.components.each do |c|
@@ -25,6 +29,10 @@ module Marginalia
       self.marginalia_controller = nil
     end
 
+    def self.clear_job!
+      self.marginalia_job = nil
+    end
+
     private
       def self.marginalia_controller=(controller)
         Thread.current[:marginalia_controller] = controller
@@ -32,6 +40,14 @@ module Marginalia
 
       def self.marginalia_controller
         Thread.current[:marginalia_controller]
+      end
+
+      def self.marginalia_job=(job)
+        Thread.current[:marginalia_job] = job
+      end
+
+      def self.marginalia_job
+        Thread.current[:marginalia_job]
       end
 
       def self.application
@@ -42,6 +58,10 @@ module Marginalia
         end
 
         Marginalia.application_name
+      end
+
+      def self.job
+        marginalia_job.class.name if marginalia_job
       end
 
       def self.controller

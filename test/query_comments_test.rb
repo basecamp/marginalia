@@ -9,6 +9,10 @@ def request_id_available?
   Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('3.2')
 end
 
+def active_job_available?
+  Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('4.2')
+end
+
 require "minitest/autorun"
 require 'mocha/test_unit'
 require 'logger'
@@ -18,6 +22,10 @@ require 'action_controller'
 
 if request_id_available?
   require 'action_dispatch/middleware/request_id'
+end
+
+if active_job_available?
+  require 'active_job'
 end
 
 if using_rails_api?
@@ -59,6 +67,14 @@ end
 module API
   module V1
     class PostsController < ::PostsController
+    end
+  end
+end
+
+if active_job_available?
+  class PostsJob < ActiveJob::Base
+    def perform
+      Post.first
     end
   end
 end
@@ -192,6 +208,17 @@ class MarginaliaTest < MiniTest::Test
       Marginalia::Comment.components = [:request_id]
       PostsController.action(:driver_only).call(@env)
       assert_match %r{^select id from posts$}, @queries.first
+    end
+  end
+
+  if active_job_available?
+    def test_active_job
+      Marginalia::Comment.components = [:job]
+      PostsJob.perform_later
+      assert_match %{job:PostsJob}, @queries.first
+
+      Post.first
+      refute_match %{job:PostsJob}, @queries.last
     end
   end
 

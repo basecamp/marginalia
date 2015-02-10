@@ -13,6 +13,10 @@ module Marginalia
         ActiveSupport.on_load :action_controller do
           Marginalia::Railtie.insert_into_action_controller
         end
+
+        ActiveSupport.on_load :active_job do
+          Marginalia::Railtie.insert_into_active_job
+        end
       end
     end
   end
@@ -21,6 +25,22 @@ module Marginalia
     def self.insert
       insert_into_active_record
       insert_into_action_controller
+      insert_into_active_job
+    end
+
+    def self.insert_into_active_job
+      if defined? ActiveJob::Base
+        ActiveJob::Base.class_eval do
+          around_perform do |job, block|
+            begin
+              Marginalia::Comment.update_job! job
+              block.call
+            ensure
+              Marginalia::Comment.clear_job!
+            end
+          end
+        end
+      end
     end
 
     def self.insert_into_action_controller
