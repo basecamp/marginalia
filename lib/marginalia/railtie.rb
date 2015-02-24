@@ -63,7 +63,6 @@ module Marginalia
         end
       end
 
-      # SQL queries made through PostgreSQLAdapter#exec_delete will not be annotated.
       if defined? ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
         ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.module_eval do
           include Marginalia::ActiveRecordInstrumentation
