@@ -94,6 +94,11 @@ default. In addition, implementation is provided for:
   * `:controller_with_namespace` to include the full classname (including namespace)
     of the controller.
   * `:job` to include the classname of the ActiveJob being performed.
+  * `:rake_task` to include the name of the Rake task being performed.
+
+For Rake tasks, you also need to add to your Rakefile.
+
+    require 'marginalia/rake'
 
 Pull requests for other included comment components are welcome.
 
