@@ -114,6 +114,11 @@ class MarginaliaTest < MiniTest::Test
     ActiveRecord::Base.connection.unstub(:annotate_sql)
   end
 
+  def test_exists
+    Post.exists?
+    assert_match %r{/\*application:rails\*/$}, @queries.first
+  end
+
   def test_query_commenting_on_mysql_driver_with_no_action
     ActiveRecord::Base.connection.execute "select id from posts"
     assert_match %r{select id from posts /\*application:rails\*/$}, @queries.first
