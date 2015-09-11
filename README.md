@@ -29,10 +29,6 @@ Patches are welcome for other database adapters.
 
     # Gemfile
     gem 'marginalia'
-    
-    # config/application.rb
-    require 'marginalia/railtie'
-
 
 ### For Rails 2.x:
 
