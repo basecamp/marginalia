@@ -13,6 +13,10 @@ module Marginalia
       self.marginalia_job = job
     end
 
+    def self.update_rake_task!(rake_task)
+      self.marginalia_rake_task = rake_task
+    end
+
     def self.construct_comment
       ret = ''
       self.components.each do |c|
@@ -50,6 +54,14 @@ module Marginalia
         Thread.current[:marginalia_job]
       end
 
+      def self.marginalia_rake_task=(rake_task)
+        Thread.current[:marginalia_rake_task] = rake_task
+      end
+
+      def self.marginalia_rake_task
+        Thread.current[:marginalia_rake_task]
+      end
+
       def self.application
         if defined?(Rails.application)
           Marginalia.application_name ||= Rails.application.class.name.split("::").first
@@ -62,6 +74,10 @@ module Marginalia
 
       def self.job
         marginalia_job.class.name if marginalia_job
+      end
+
+      def self.rake_task
+        marginalia_rake_task
       end
 
       def self.controller
