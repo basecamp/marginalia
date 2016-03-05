@@ -56,6 +56,13 @@ module Marginalia
       exec_query_without_marginalia(annotate_sql(sql), name, binds)
     end
 
+    if ActiveRecord::VERSION::MAJOR >= 5
+      def exec_query_with_marginalia(sql, name = 'SQL', binds = [], options = {})
+        options[:prepare] ||= false
+        exec_query_without_marginalia(annotate_sql(sql), name, binds, options)
+      end
+    end
+
     def exec_delete_with_marginalia(sql, name = 'SQL', binds = [])
       exec_delete_without_marginalia(annotate_sql(sql), name, binds)
     end
