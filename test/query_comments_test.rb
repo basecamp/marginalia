@@ -205,6 +205,12 @@ class MarginaliaTest < MiniTest::Test
     assert_match %r{/\*controller_with_namespace:API::V1::PostsController}, @queries.first
   end
 
+  def test_sql_comment_injection
+    Marginalia.application_name = "a sketchy comment */"
+    ActiveRecord::Base.connection.execute "select id from posts"
+    assert_match %r{select id from posts /\*application:a sketchy comment \*/$}, @queries.first
+  end
+
   if request_id_available?
     def test_request_id
       @env["action_dispatch.request_id"] = "some-uuid"

@@ -22,6 +22,7 @@ module Marginalia
         end
       end
       ret.chop!
+      ret.gsub!(/\*\//, "")
       ret
     end
 
