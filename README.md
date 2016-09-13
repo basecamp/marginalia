@@ -29,10 +29,6 @@ Patches are welcome for other database adapters.
 
     # Gemfile
     gem 'marginalia'
-    
-    # config/application.rb
-    require 'marginalia/railtie'
-
 
 ### For Rails 2.x:
 
@@ -94,6 +90,8 @@ default. In addition, implementation is provided for:
   * `:controller_with_namespace` to include the full classname (including namespace)
     of the controller.
   * `:job` to include the classname of the ActiveJob being performed.
+  * `:hostname` to include ```Socket.gethostname```.
+  * `:pid` to include current process id. 
 
 Pull requests for other included comment components are welcome.
 

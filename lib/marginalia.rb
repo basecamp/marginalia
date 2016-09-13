@@ -56,6 +56,13 @@ module Marginalia
       exec_query_without_marginalia(annotate_sql(sql), name, binds)
     end
 
+    if ActiveRecord::VERSION::MAJOR >= 5
+      def exec_query_with_marginalia(sql, name = 'SQL', binds = [], options = {})
+        options[:prepare] ||= false
+        exec_query_without_marginalia(annotate_sql(sql), name, binds, options)
+      end
+    end
+
     def exec_delete_with_marginalia(sql, name = 'SQL', binds = [])
       exec_delete_without_marginalia(annotate_sql(sql), name, binds)
     end
@@ -68,7 +75,11 @@ module Marginalia
   module ActionControllerInstrumentation
     def self.included(instrumented_class)
       instrumented_class.class_eval do
-        around_filter :record_query_comment
+        if respond_to?(:around_action)
+          around_action :record_query_comment
+        else
+          around_filter :record_query_comment
+        end
       end
     end
 
