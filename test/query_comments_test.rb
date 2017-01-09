@@ -116,7 +116,7 @@ class MarginaliaTest < MiniTest::Test
 
   def test_exists
     Post.exists?
-    assert_match %r{/\*application:rails\*/$}, @queries.first
+    assert_match %r{/\*application:rails\*/$}, @queries.last
   end
 
   def test_query_commenting_on_mysql_driver_with_no_action
