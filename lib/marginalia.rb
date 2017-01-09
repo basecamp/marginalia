@@ -12,28 +12,33 @@ module Marginalia
           alias_method :execute, :execute_with_marginalia
         end
 
-        is_mysql2 = defined?(ActiveRecord::ConnectionAdapters::Mysql2Adapter) &&
-          ActiveRecord::ConnectionAdapters::Mysql2Adapter == instrumented_class
-        # Dont instrument exec_query on mysql2 and AR 3.2+, as it calls execute internally
-        unless is_mysql2 && ActiveRecord::VERSION::STRING > "3.1"
-          if instrumented_class.method_defined?(:exec_query)
-            alias_method :exec_query_without_marginalia, :exec_query
-            alias_method :exec_query, :exec_query_with_marginalia
+        if instrumented_class.private_method_defined?(:execute_and_clear)
+          alias_method :execute_and_clear_without_marginalia, :execute_and_clear
+          alias_method :execute_and_clear, :execute_and_clear_with_marginalia
+        else
+          is_mysql2 = defined?(ActiveRecord::ConnectionAdapters::Mysql2Adapter) &&
+            ActiveRecord::ConnectionAdapters::Mysql2Adapter == instrumented_class
+          # Dont instrument exec_query on mysql2 and AR 3.2+, as it calls execute internally
+          unless is_mysql2 && ActiveRecord::VERSION::STRING > "3.1"
+            if instrumented_class.method_defined?(:exec_query)
+              alias_method :exec_query_without_marginalia, :exec_query
+              alias_method :exec_query, :exec_query_with_marginalia
+            end
           end
-        end
 
-        is_postgres = defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
-          ActiveRecord::ConnectionAdapters::PostgreSQLAdapter == instrumented_class
-        # Instrument exec_delete and exec_update on AR 3.2+, since they don't
-        # call execute internally
-        if is_postgres && ActiveRecord::VERSION::STRING > "3.1"
-          if instrumented_class.method_defined?(:exec_delete)
-            alias_method :exec_delete_without_marginalia, :exec_delete
-            alias_method :exec_delete, :exec_delete_with_marginalia
-          end
-          if instrumented_class.method_defined?(:exec_update)
-            alias_method :exec_update_without_marginalia, :exec_update
-            alias_method :exec_update, :exec_update_with_marginalia
+          is_postgres = defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
+            ActiveRecord::ConnectionAdapters::PostgreSQLAdapter == instrumented_class
+          # Instrument exec_delete and exec_update on AR 3.2+, since they don't
+          # call execute internally
+          if is_postgres && ActiveRecord::VERSION::STRING > "3.1"
+            if instrumented_class.method_defined?(:exec_delete)
+              alias_method :exec_delete_without_marginalia, :exec_delete
+              alias_method :exec_delete, :exec_delete_with_marginalia
+            end
+            if instrumented_class.method_defined?(:exec_update)
+              alias_method :exec_update_without_marginalia, :exec_update
+              alias_method :exec_update, :exec_update_with_marginalia
+            end
           end
         end
       end
@@ -69,6 +74,10 @@ module Marginalia
 
     def exec_update_with_marginalia(sql, name = 'SQL', binds = [])
       exec_update_without_marginalia(annotate_sql(sql), name, binds)
+    end
+
+    def execute_and_clear_with_marginalia(sql, *args, &block)
+      execute_and_clear_without_marginalia(annotate_sql(sql), *args, &block)
     end
   end
 
