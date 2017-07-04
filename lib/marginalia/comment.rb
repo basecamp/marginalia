@@ -13,6 +13,10 @@ module Marginalia
       self.marginalia_job = job
     end
 
+    def self.update_adapter!(adapter)
+      self.marginalia_adapter = adapter
+    end
+
     def self.construct_comment
       ret = ''
       self.components.each do |c|
@@ -48,6 +52,14 @@ module Marginalia
 
       def self.marginalia_job
         Thread.current[:marginalia_job]
+      end
+
+      def self.marginalia_adapter=(adapter)
+        Thread.current[:marginalia_adapter] = adapter
+      end
+
+      def self.marginalia_adapter
+        Thread.current[:marginalia_adapter]
       end
 
       def self.application
@@ -108,6 +120,29 @@ module Marginalia
         if marginalia_controller.respond_to?(:request) && marginalia_controller.request.respond_to?(:uuid)
           marginalia_controller.request.uuid
         end
+      end
+
+      def self.socket
+        if self.connection_config.present?
+          self.connection_config[:socket]
+        end
+      end
+
+      def self.db_host
+        if self.connection_config.present?
+          self.connection_config[:host]
+        end
+      end
+
+      def self.database
+        if self.connection_config.present?
+          self.connection_config[:database]
+        end
+      end
+
+      def self.connection_config
+        return if marginalia_adapter.pool.nil?
+        marginalia_adapter.pool.spec.config
       end
   end
 
