@@ -122,27 +122,29 @@ module Marginalia
         end
       end
 
-      def self.socket
-        if self.connection_config.present?
-          self.connection_config[:socket]
+      if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('3.2.19')
+        def self.socket
+          if self.connection_config.present?
+            self.connection_config[:socket]
+          end
         end
-      end
 
-      def self.db_host
-        if self.connection_config.present?
-          self.connection_config[:host]
+        def self.db_host
+          if self.connection_config.present?
+            self.connection_config[:host]
+          end
         end
-      end
 
-      def self.database
-        if self.connection_config.present?
-          self.connection_config[:database]
+        def self.database
+          if self.connection_config.present?
+            self.connection_config[:database]
+          end
         end
-      end
 
-      def self.connection_config
-        return if marginalia_adapter.pool.nil?
-        marginalia_adapter.pool.spec.config
+        def self.connection_config
+          return if marginalia_adapter.pool.nil?
+          marginalia_adapter.pool.spec.config
+        end
       end
   end
 

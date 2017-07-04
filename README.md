@@ -92,6 +92,8 @@ default. In addition, implementation is provided for:
   * `:job` to include the classname of the ActiveJob being performed.
   * `:hostname` to include ```Socket.gethostname```.
   * `:pid` to include current process id. 
+
+With ActiveRecord >= 3.2.19:
   * `:db_host` to include the configured database hostname.
   * `:socket` to include the configured database socket.
   * `:database` to include the configured database name.
