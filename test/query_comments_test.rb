@@ -219,7 +219,7 @@ class MarginaliaTest < MiniTest::Test
 
   def test_socket
     # setting socket in configuration would break some connections - mock it instead
-    pool = ActiveRecord::Base.connection_handler.connection_pool_list[0]
+    pool = ActiveRecord::Base.connection_pool
     pool.spec.stubs(:config).returns({:socket => "marginalia_socket"})
     Marginalia::Comment.components = [:socket]
     API::V1::PostsController.action(:driver_only).call(@env)
