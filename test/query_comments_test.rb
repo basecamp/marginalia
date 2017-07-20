@@ -13,6 +13,10 @@ def active_job_available?
   Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('4.2')
 end
 
+def adapter_pool_available?
+  Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('3.2.19')
+end
+
 require "minitest/autorun"
 require 'mocha/test_unit'
 require 'logger'
@@ -203,6 +207,30 @@ class MarginaliaTest < MiniTest::Test
     Marginalia::Comment.components = [:controller_with_namespace]
     API::V1::PostsController.action(:driver_only).call(@env)
     assert_match %r{/\*controller_with_namespace:API::V1::PostsController}, @queries.first
+  end
+
+  if adapter_pool_available?
+    def test_db_host
+      Marginalia::Comment.components = [:db_host]
+      API::V1::PostsController.action(:driver_only).call(@env)
+      assert_match %r{/\*db_host:localhost}, @queries.first
+    end
+
+    def test_database
+      Marginalia::Comment.components = [:database]
+      API::V1::PostsController.action(:driver_only).call(@env)
+      assert_match %r{/\*database:marginalia_test}, @queries.first
+    end
+
+    def test_socket
+      # setting socket in configuration would break some connections - mock it instead
+      pool = ActiveRecord::Base.connection_pool
+      pool.spec.stubs(:config).returns({:socket => "marginalia_socket"})
+      Marginalia::Comment.components = [:socket]
+      API::V1::PostsController.action(:driver_only).call(@env)
+      assert_match %r{/\*socket:marginalia_socket}, @queries.first
+      pool.spec.unstub(:config)
+    end
   end
 
   if request_id_available?
