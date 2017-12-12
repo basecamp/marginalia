@@ -95,13 +95,13 @@ class MarginaliaTest < MiniTest::Test
 
   def test_configuring_application
     Marginalia.set('app', 'customapp')
-    Post.all
+    Post.all.to_a
     assert_match %r{/\*app=customapp\*/$}, @queries.first
   end
 
   def test_configuring_query_components
     Marginalia.set('controller', 'posts')
-    Post.all
+    Post.all.to_a
     assert_match %r{/\*app=rails,controller=posts\*/$}, @queries.first
   end
 
