@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-def adapter_pool_available?
-  Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('3.2.19')
-end
-
 require "minitest/autorun"
 require 'mocha/test_unit'
 require 'logger'
 require 'pp'
 require 'active_record'
+
+require 'active_record/connection_adapters/mysql2_adapter'
+require 'active_record/connection_adapters/postgresql_adapter'
 
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
