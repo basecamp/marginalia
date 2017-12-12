@@ -8,7 +8,6 @@ sudo: false
 script: bundle exec rake db:reset test:all
 
 env:
-  - "RAILS_VERSION=3.1.12"
   - "RAILS_VERSION=3.2.19"
   - "RAILS_VERSION=4.0.8"
   - "RAILS_VERSION=4.1.8"
