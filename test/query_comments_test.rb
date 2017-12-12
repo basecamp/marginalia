@@ -65,12 +65,6 @@ class MarginaliaTest < MiniTest::Test
     ActiveRecord::Base.connection.unstub(:annotate_sql)
   end
 
-  def test_exists
-    skip if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('3.2')
-    Post.exists?
-    assert_match %r{/\*app=rails\*/$}, @queries.last
-  end
-
   def test_query_commenting_on_mysql_driver_with_no_action
     ActiveRecord::Base.connection.execute "select id from posts"
     assert_match %r{select id from posts /\*app=rails\*/$}, @queries.first
