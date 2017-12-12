@@ -9,6 +9,12 @@ require 'active_record'
 require 'active_record/connection_adapters/mysql2_adapter'
 require 'active_record/connection_adapters/postgresql_adapter'
 
+# patch for older versions of activerecord
+# https://stackoverflow.com/questions/21075515/creating-tables-and-problems-with-primary-key-in-rails
+class ActiveRecord::ConnectionAdapters::Mysql2Adapter
+  NATIVE_DATABASE_TYPES[:primary_key] = "int(11) auto_increment PRIMARY KEY"
+end
+
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 
