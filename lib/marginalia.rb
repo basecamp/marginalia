@@ -2,8 +2,6 @@ require 'marginalia/railtie'
 require 'marginalia/comment'
 
 module Marginalia
-  mattr_accessor :application_name
-
   module ActiveRecordInstrumentation
     def self.included(instrumented_class)
       instrumented_class.class_eval do
@@ -79,25 +77,6 @@ module Marginalia
 
     def execute_and_clear_with_marginalia(sql, *args, &block)
       execute_and_clear_without_marginalia(annotate_sql(sql), *args, &block)
-    end
-  end
-
-  module ActionControllerInstrumentation
-    def self.included(instrumented_class)
-      instrumented_class.class_eval do
-        if respond_to?(:around_action)
-          around_action :record_query_comment
-        else
-          around_filter :record_query_comment
-        end
-      end
-    end
-
-    def record_query_comment
-      Marginalia::Comment.update!(self)
-      yield
-    ensure
-      Marginalia::Comment.clear!
     end
   end
 end

@@ -11,7 +11,6 @@ Gem::Specification.new do |gem|
   gem.version       = "1.5.0"
   gem.license       = "MIT"
 
-  gem.add_runtime_dependency "actionpack", ">= 2.3"
   gem.add_runtime_dependency "activerecord", ">= 2.3"
   gem.add_development_dependency "rake"
   gem.add_development_dependency "mysql"
