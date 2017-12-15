@@ -15,7 +15,17 @@ module Marginalia
   end
 
   def self.construct_comment
-    self.context.map {|k,v| "#{k}=#{v}"}.join(',')
+    values = self.context.map {|k,v| "#{k}=#{v}"}.join(',')
+    values = self.escape_sql_comment(values)
+    '/*' + values + '*/'
+  end
+
+  def self.escape_sql_comment(str)
+    str = str.dup
+    while str.include?('/*') || str.include?('*/')
+      str = str.gsub('/*', '').gsub('*/', '')
+    end
+    str
   end
 
   private

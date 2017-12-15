@@ -1,3 +1,5 @@
+require 'active_record'
+
 module Marginalia
   module ActiveRecordInstrumentation
     def self.install
@@ -68,7 +70,7 @@ module Marginalia
     def annotate_sql(sql)
       comment = Marginalia.construct_comment
       if comment.present? && !sql.include?(comment)
-        "#{sql} /*#{comment}*/"
+        "#{sql} #{comment}"
       else
         sql
       end
