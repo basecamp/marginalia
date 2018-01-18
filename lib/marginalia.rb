@@ -15,7 +15,7 @@ module Marginalia
   end
 
   def self.construct_comment
-    values = self.context.map {|k,v| "#{k}=#{v}"}.join(',')
+    values = self.context.map {|k,v| "#{k}:#{v}"}.join(',')
     values = self.escape_sql_comment(values)
     '/*' + values + '*/'
   end
