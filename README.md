@@ -12,7 +12,7 @@ For example, once enabled, your logs will look like:
     Account Load (0.3ms)  SELECT `accounts`.* FROM `accounts`
     WHERE `accounts`.`queenbee_id` = 1234567890
     LIMIT 1
-    /*app=api,endpoint=Travis::API::V3::Services::Repositories::ForCurrentUser,request_id=123e4567-e89b-12d3-a456-426655440000*/
+    /*app:api,endpoint:Travis::API::V3::Services::Repositories::ForCurrentUser,request_id:123e4567-e89b-12d3-a456-426655440000*/
 
 You can also use these query comments along with a tool like [pt-query-digest](http://www.percona.com/doc/percona-toolkit/2.1/pt-query-digest.html#query-reviews)
 to automate identification of controllers and actions that are hotspots for slow queries.

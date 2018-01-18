@@ -67,13 +67,13 @@ class MarginaliaTest < MiniTest::Test
 
   def test_query_commenting_on_mysql_driver_with_no_action
     ActiveRecord::Base.connection.execute "select id from posts"
-    assert_match %r{select id from posts /\*app=rails\*/$}, @queries.first
+    assert_match %r{select id from posts /\*app:rails\*/$}, @queries.first
   end
 
   if ENV["DRIVER"] =~ /^mysql/
     def test_query_commenting_on_mysql_driver_with_binary_chars
       ActiveRecord::Base.connection.execute "select id from posts /* \x81\x80\u0010\ */"
-      assert_equal "select id from posts /* \x81\x80\u0010 */ /*app=rails*/", @queries.first
+      assert_equal "select id from posts /* \x81\x80\u0010 */ /*app:rails*/", @queries.first
     end
   end
 
@@ -96,13 +96,13 @@ class MarginaliaTest < MiniTest::Test
   def test_configuring_application
     Marginalia.set('app', 'customapp')
     Post.all.to_a
-    assert_match %r{/\*app=customapp\*/$}, @queries.first
+    assert_match %r{/\*app:customapp\*/$}, @queries.first
   end
 
   def test_configuring_query_components
     Marginalia.set('controller', 'posts')
     Post.all.to_a
-    assert_match %r{/\*app=rails,controller=posts\*/$}, @queries.first
+    assert_match %r{/\*app:rails,controller=posts\*/$}, @queries.first
   end
 
   def teardown
