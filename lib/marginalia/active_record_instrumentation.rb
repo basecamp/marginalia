@@ -8,12 +8,6 @@ module Marginalia
           include Marginalia::ActiveRecordInstrumentation
         end
       end
-
-      if defined? ActiveRecord::ConnectionAdapters::SQLite3Adapter
-        ActiveRecord::ConnectionAdapters::SQLite3Adapter.module_eval do
-          include Marginalia::ActiveRecordInstrumentation
-        end
-      end
     end
 
     def self.included(instrumented_class)
