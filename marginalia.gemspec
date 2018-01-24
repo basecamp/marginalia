@@ -11,9 +11,10 @@ Gem::Specification.new do |gem|
   gem.version       = "1.5.0"
   gem.license       = "MIT"
 
+  gem.add_dependency "pg", "0.21"
+
   gem.add_development_dependency "activerecord", ">= 2.3"
   gem.add_development_dependency "rake"
-  gem.add_development_dependency "pg"
   gem.add_development_dependency "minitest"
   gem.add_development_dependency "mocha"
 
