@@ -5,11 +5,23 @@ require 'mocha/test_unit'
 require 'logger'
 require 'pp'
 require 'active_record'
+require 'tmpdir'
 
 require 'active_record/connection_adapters/postgresql_adapter'
 
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
+
+pg_port = 5433
+
+# TODO log all statements via log_statement=all
+pg_dir = Dir.mktmpdir
+puts %x[initdb #{pg_dir}]
+puts %x[pg_ctl -o "-p #{pg_port}" -D #{pg_dir} -l postgres.log start]
+puts %x[createdb -p #{pg_port} marginalia_test]
+
+# TODO stop database at exit
+# puts %x[pg_ctl -o "-p #{pg_port}" -D #{pg_dir} stop]
 
 # From version 4.1, ActiveRecord expects `Rails.env` to be
 # defined if `Rails` is defined
@@ -26,6 +38,7 @@ RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 ActiveRecord::Base.establish_connection({
   :adapter  => ENV["DRIVER"] || "postgresql",
   :host     => "localhost",
+  :port     => pg_port,
   :username => ENV["DB_USERNAME"] || "root",
   :database => "marginalia_test"
 })
@@ -44,10 +57,6 @@ Marginalia.install
 
 class MarginaliaTest < MiniTest::Test
   def setup
-    @queries = []
-    ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
-      @queries << args.last[:sql]
-    end
     Marginalia.set('app', 'rails')
   end
 
