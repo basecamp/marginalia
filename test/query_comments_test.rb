@@ -6,14 +6,7 @@ require 'logger'
 require 'pp'
 require 'active_record'
 
-require 'active_record/connection_adapters/mysql2_adapter'
 require 'active_record/connection_adapters/postgresql_adapter'
-
-# patch for older versions of activerecord
-# https://stackoverflow.com/questions/21075515/creating-tables-and-problems-with-primary-key-in-rails
-class ActiveRecord::ConnectionAdapters::Mysql2Adapter
-  NATIVE_DATABASE_TYPES[:primary_key] = "int(11) auto_increment PRIMARY KEY"
-end
 
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
@@ -31,7 +24,7 @@ require 'marginalia'
 RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 
 ActiveRecord::Base.establish_connection({
-  :adapter  => ENV["DRIVER"] || "mysql",
+  :adapter  => ENV["DRIVER"] || "postgresql",
   :host     => "localhost",
   :username => ENV["DB_USERNAME"] || "root",
   :database => "marginalia_test"
@@ -63,18 +56,6 @@ class MarginaliaTest < MiniTest::Test
     ActiveRecord::Base.connection.send(:select, "select id from posts")
   ensure
     ActiveRecord::Base.connection.unstub(:annotate_sql)
-  end
-
-  def test_query_commenting_on_mysql_driver_with_no_action
-    ActiveRecord::Base.connection.execute "select id from posts"
-    assert_match %r{select id from posts /\*app:rails\*/$}, @queries.first
-  end
-
-  if ENV["DRIVER"] =~ /^mysql/
-    def test_query_commenting_on_mysql_driver_with_binary_chars
-      ActiveRecord::Base.connection.execute "select id from posts /* \x81\x80\u0010\ */"
-      assert_equal "select id from posts /* \x81\x80\u0010 */ /*app:rails*/", @queries.first
-    end
   end
 
   if ENV["DRIVER"] =~ /^postgres/

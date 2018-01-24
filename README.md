@@ -1,4 +1,6 @@
 > Note: This is a fork of marginalia with the rails-specific stuff thrown out.
+> It targets Postgres and wraps the `pg` gem directly so as not to be coupled to
+> a specific ORM.
 
 # marginalia [![Build Status](https://travis-ci.org/travis-ci/marginalia.svg?branch=master)](https://travis-ci.org/travis-ci/marginalia)
 
@@ -19,11 +21,6 @@ to automate identification of controllers and actions that are hotspots for slow
 
 This gem was created at 37signals. You can read more about how we use it [on
 our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-rails).
-
-This has been tested and used in production with both the mysql and mysql2 gems,
-tested on Rails 2.3.5 through 4.1.x. It has also been tested for sqlite3 and postgres.
-
-Patches are welcome for other database adapters.
 
 ## Installation
 
@@ -51,9 +48,8 @@ Then in your code, register install the monkey patches:
 Start by bundling and creating the test database:
 
     bundle
-    rake db:mysql:create
     rake db:postgresql:create
 
-Then, running `rake` will run the tests on all the database adapters (`mysql`, `mysql2`, `postgresql` and `sqlite`):
+Then, running `rake` will run the tests on all the postgres adapter:
 
     rake

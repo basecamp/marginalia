@@ -3,18 +3,6 @@ require 'active_record'
 module Marginalia
   module ActiveRecordInstrumentation
     def self.install
-      if defined? ActiveRecord::ConnectionAdapters::Mysql2Adapter
-        ActiveRecord::ConnectionAdapters::Mysql2Adapter.module_eval do
-          include Marginalia::ActiveRecordInstrumentation
-        end
-      end
-
-      if defined? ActiveRecord::ConnectionAdapters::MysqlAdapter
-        ActiveRecord::ConnectionAdapters::MysqlAdapter.module_eval do
-          include Marginalia::ActiveRecordInstrumentation
-        end
-      end
-
       if defined? ActiveRecord::ConnectionAdapters::PostgreSQLAdapter
         ActiveRecord::ConnectionAdapters::PostgreSQLAdapter.module_eval do
           include Marginalia::ActiveRecordInstrumentation
@@ -39,16 +27,6 @@ module Marginalia
           alias_method :execute_and_clear_without_marginalia, :execute_and_clear
           alias_method :execute_and_clear, :execute_and_clear_with_marginalia
         else
-          is_mysql2 = defined?(ActiveRecord::ConnectionAdapters::Mysql2Adapter) &&
-            ActiveRecord::ConnectionAdapters::Mysql2Adapter == instrumented_class
-          # Dont instrument exec_query on mysql2 and AR 3.2+, as it calls execute internally
-          unless is_mysql2 && ActiveRecord::VERSION::STRING > "3.1"
-            if instrumented_class.method_defined?(:exec_query)
-              alias_method :exec_query_without_marginalia, :exec_query
-              alias_method :exec_query, :exec_query_with_marginalia
-            end
-          end
-
           is_postgres = defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
             ActiveRecord::ConnectionAdapters::PostgreSQLAdapter == instrumented_class
           # Instrument exec_delete and exec_update on AR 3.2+, since they don't

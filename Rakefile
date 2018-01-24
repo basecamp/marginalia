@@ -5,12 +5,7 @@ task :default => ['test:all']
 
 namespace :test do
   desc "test all drivers"
-  task :all => [:mysql2, :postgresql, :sqlite]
-
-  desc "test mysql2 driver"
-  task :mysql2 do
-    sh "DRIVER=mysql2 ruby -Ilib -Itest test/*_test.rb"
-  end
+  task :all => [:postgresql, :sqlite]
 
   desc "test PostgreSQL driver"
   task :postgresql do
@@ -26,22 +21,7 @@ end
 namespace :db do
 
   desc "reset all databases"
-  task :reset => [:"mysql:reset", :"postgresql:reset"]
-
-  namespace :mysql do
-    desc "reset MySQL database"
-    task :reset => [:drop, :create]
-
-    desc "create MySQL database"
-    task :create do
-      sh 'mysql -u root -e "create database marginalia_test;"'
-    end
-
-    desc "drop MySQL database"
-    task :drop do
-      sh 'mysql -u root -e "drop database if exists marginalia_test;"'
-    end
-  end
+  task :reset => [:"postgresql:reset"]
 
   namespace :postgresql do
     desc "reset PostgreSQL database"
