@@ -1,14 +1,11 @@
 language: ruby
 
 rvm:
-  - 2.4.2
+  - 2.5.0
 
 sudo: false
 
-script: bundle exec rake db:reset test:all
+before_install:
+  - bash -c "yes | gem uninstall -i /home/travis/.rvm/gems/ruby-2.5.0@global rake"
 
-env:
-  - "RAILS_VERSION=3.2.19"
-  - "RAILS_VERSION=4.0.8"
-  - "RAILS_VERSION=4.1.8"
-  - "RAILS_VERSION=4.2.0"
+script: bundle exec rake db:reset test:postgresql
