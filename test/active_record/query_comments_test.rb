@@ -33,9 +33,10 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
     @@pg_dir = Dir.mktmpdir
     @@pg_port = 5439
     @@db_name = "active_record_marginalia_test"
+    @@log_file = "active_record_logfile"
 
     %x[initdb -A trust -D #{@@pg_dir}]
-    %x[pg_ctl -o"-p #{@@pg_port}" -D#{@@pg_dir} -l logfile start]
+    %x[pg_ctl -o"-p #{@@pg_port}" -D#{@@pg_dir} -l#{@@log_file} start]
     %x[createdb -p#{@@pg_port} #{@@db_name}]
 
     ActiveRecord::Base.establish_connection({
@@ -53,6 +54,11 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
       end
     end
 
+    @queries = []
+    ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
+      @queries << args.last[:sql]
+    end
+
     Marginalia.install
     Marginalia.set('app', 'rails')
   end
@@ -64,20 +70,18 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
     ActiveRecord::Base.connection.unstub(:annotate_sql)
   end
 
-  # if ENV["DRIVER"] =~ /^postgres/
-  #   def test_query_commenting_on_postgres_update
-  #     ActiveRecord::Base.connection.expects(:annotate_sql).returns("update posts set id = 1").once
-  #     ActiveRecord::Base.connection.send(:exec_update, "update posts set id = 1")
-  #   ensure
-  #     ActiveRecord::Base.connection.unstub(:annotate_sql)
-  #   end
+  # def test_query_commenting_on_postgres_update
+  #   ActiveRecord::Base.connection.expects(:annotate_sql).returns("update posts set id = 1").once
+  #   ActiveRecord::Base.connection.send(:exec_update, "update posts set id = 1")
+  # ensure
+  #   ActiveRecord::Base.connection.unstub(:annotate_sql)
+  # end
 
-  #   def test_query_commenting_on_postgres_delete
-  #     ActiveRecord::Base.connection.expects(:annotate_sql).returns("delete from posts where id = 1").once
-  #     ActiveRecord::Base.connection.send(:exec_delete, "delete from posts where id = 1")
-  #   ensure
-  #     ActiveRecord::Base.connection.unstub(:annotate_sql)
-  #   end
+  # def test_query_commenting_on_postgres_delete
+  #   ActiveRecord::Base.connection.expects(:annotate_sql).returns("delete from posts where id = 1").once
+  #   ActiveRecord::Base.connection.send(:exec_delete, "delete from posts where id = 1")
+  # ensure
+  #   ActiveRecord::Base.connection.unstub(:annotate_sql)
   # end
 
   def test_configuring_application
@@ -97,5 +101,6 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
     system("dropdb -p#{@@pg_port} #{@@db_name}")
     system("pg_ctl -o'-p #{@@pg_port}' -D#{@@pg_dir} -l logfile stop")
+    system("rm #{@@log_file}")
   end
 end
