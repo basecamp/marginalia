@@ -29,28 +29,31 @@ class Post < ActiveRecord::Base
 end
 
 class ActiveRecordMarginaliaTest < MiniTest::Test
+  DB_PORT=5439
+  DB_NAME="active_record_marginalia_test"
+  LOG_FILE="active_record_logfile"
   @@db_instance = TestHelpers.create_db(
-    db_name: "active_record_marginalia_test",
-    db_port: 5439,
-    log_file: "active_record_logfile",
+    db_name: DB_NAME,
+    db_port: DB_PORT,
+    log_file: LOG_FILE,
   )
 
-  def setup
-    ActiveRecord::Base.establish_connection({
-      :adapter  => ENV["DRIVER"] || "postgresql",
-      :host     => "localhost",
-      :port     => @@db_instance.port,
-      :username => ENV["DB_USERNAME"] || "root",
-      :database => @@db_instance.db_name,
-    })
+  ActiveRecord::Base.establish_connection({
+    :adapter  => "postgresql",
+    :host     => "localhost",
+    :port     => DB_PORT,
+    :username => ENV["DB_USERNAME"] || "root",
+    :database => DB_NAME,
+  })
 
-    unless Post.table_exists?
-      ActiveRecord::Schema.define do
-        create_table "posts", :force => true do |t|
-        end
+  unless Post.table_exists?
+    ActiveRecord::Schema.define do
+      create_table "posts", :force => true do |t|
       end
     end
+  end
 
+  def setup
     @queries = []
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
       @queries << args.last[:sql]
@@ -74,12 +77,12 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   #   ActiveRecord::Base.connection.unstub(:annotate_sql)
   # end
 
-  # def test_query_commenting_on_postgres_delete
-  #   ActiveRecord::Base.connection.expects(:annotate_sql).returns("delete from posts where id = 1").once
-  #   ActiveRecord::Base.connection.send(:exec_delete, "delete from posts where id = 1")
-  # ensure
-  #   ActiveRecord::Base.connection.unstub(:annotate_sql)
-  # end
+  def test_query_commenting_on_postgres_delete
+    ActiveRecord::Base.connection.expects(:annotate_sql).returns("delete from posts where id = 1").once
+    ActiveRecord::Base.connection.send(:exec_delete, "delete from posts where id = 1")
+  ensure
+    ActiveRecord::Base.connection.unstub(:annotate_sql)
+  end
 
   def test_configuring_application
     Marginalia.set('app', 'customapp')
@@ -87,15 +90,14 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
     assert_match %r{/\*app:customapp\*/$}, @queries.first
   end
 
-  # def test_configuring_query_components
-  #   Marginalia.set('controller', 'posts')
-  #   Post.all.to_a
-  #   assert_match %r{/\*app:rails,controller=posts\*/$}, @queries.first
-  # end
+  def test_configuring_query_components
+    Marginalia.set('controller', 'posts')
+    Post.all.to_a
+    assert_match %r{/\*app:rails,controller:posts\*/$}, @queries.first
+  end
 
   def teardown
     Marginalia.clear!
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
-    TestHelpers.drop_db(instance: @@db_instance)
   end
 end
