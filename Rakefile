@@ -6,7 +6,7 @@ task :default => ['test:postgresql']
 namespace :test do
   desc "test PostgreSQL driver"
   task :postgresql do
-    sh "DRIVER=postgresql DB_USERNAME=postgres ruby -Ilib -Itest test/*_test.rb"
+    sh "DRIVER=postgresql DB_USERNAME=$(whoami) ruby -Ilib -Itest test/**/*_test.rb"
   end
 end
 

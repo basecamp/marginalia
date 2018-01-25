@@ -1,0 +1,81 @@
+2018-01-25 10:55:44.544 CET [26285] LOG:  listening on IPv6 address "::1", port 5439
+2018-01-25 10:55:44.544 CET [26285] LOG:  listening on IPv4 address "127.0.0.1", port 5439
+2018-01-25 10:55:44.545 CET [26285] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5439"
+2018-01-25 10:55:44.556 CET [26286] LOG:  database system was shut down at 2018-01-25 10:55:44 CET
+2018-01-25 10:55:44.559 CET [26285] LOG:  database system is ready to accept connections
+2018-01-25 10:55:45.023 CET [26295] FATAL:  database "marginalia_test" does not exist
+2018-01-25 10:55:45.178 CET [26285] LOG:  received fast shutdown request
+2018-01-25 10:55:45.178 CET [26285] LOG:  aborting any active transactions
+2018-01-25 10:55:45.179 CET [26285] LOG:  worker process: logical replication launcher (PID 26292) exited with exit code 1
+2018-01-25 10:55:45.179 CET [26287] LOG:  shutting down
+2018-01-25 10:55:45.184 CET [26285] LOG:  database system is shut down
+2018-01-25 10:56:16.356 CET [26462] LOG:  listening on IPv6 address "::1", port 5439
+2018-01-25 10:56:16.356 CET [26462] LOG:  listening on IPv4 address "127.0.0.1", port 5439
+2018-01-25 10:56:16.357 CET [26462] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5439"
+2018-01-25 10:56:16.368 CET [26463] LOG:  database system was shut down at 2018-01-25 10:56:16 CET
+2018-01-25 10:56:16.371 CET [26462] LOG:  database system is ready to accept connections
+2018-01-25 10:56:21.974 CET [26474] ERROR:  database "active_record_marginalia_test" is being accessed by other users
+2018-01-25 10:56:21.974 CET [26474] DETAIL:  There is 1 other session using the database.
+2018-01-25 10:56:21.974 CET [26474] STATEMENT:  DROP DATABASE active_record_marginalia_test;
+2018-01-25 10:56:21.993 CET [26462] LOG:  received fast shutdown request
+2018-01-25 10:56:21.995 CET [26462] LOG:  aborting any active transactions
+2018-01-25 10:56:21.995 CET [26472] FATAL:  terminating connection due to administrator command
+2018-01-25 10:56:21.998 CET [26462] LOG:  worker process: logical replication launcher (PID 26469) exited with exit code 1
+2018-01-25 10:56:22.000 CET [26464] LOG:  shutting down
+2018-01-25 10:56:22.014 CET [26462] LOG:  database system is shut down
+2018-01-25 10:58:45.244 CET [26711] LOG:  listening on IPv6 address "::1", port 5439
+2018-01-25 10:58:45.244 CET [26711] LOG:  listening on IPv4 address "127.0.0.1", port 5439
+2018-01-25 10:58:45.245 CET [26711] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5439"
+2018-01-25 10:58:45.256 CET [26712] LOG:  database system was shut down at 2018-01-25 10:58:45 CET
+2018-01-25 10:58:45.259 CET [26711] LOG:  database system is ready to accept connections
+2018-01-25 10:58:50.854 CET [26723] ERROR:  database "active_record_marginalia_test" is being accessed by other users
+2018-01-25 10:58:50.854 CET [26723] DETAIL:  There is 1 other session using the database.
+2018-01-25 10:58:50.854 CET [26723] STATEMENT:  DROP DATABASE active_record_marginalia_test;
+2018-01-25 10:58:50.872 CET [26711] LOG:  received fast shutdown request
+2018-01-25 10:58:50.874 CET [26711] LOG:  aborting any active transactions
+2018-01-25 10:58:50.874 CET [26721] FATAL:  terminating connection due to administrator command
+2018-01-25 10:58:50.875 CET [26711] LOG:  worker process: logical replication launcher (PID 26718) exited with exit code 1
+2018-01-25 10:58:50.876 CET [26713] LOG:  shutting down
+2018-01-25 10:58:50.892 CET [26711] LOG:  database system is shut down
+2018-01-25 11:01:24.515 CET [27072] LOG:  listening on IPv6 address "::1", port 5439
+2018-01-25 11:01:24.515 CET [27072] LOG:  listening on IPv4 address "127.0.0.1", port 5439
+2018-01-25 11:01:24.516 CET [27072] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5439"
+2018-01-25 11:01:24.528 CET [27073] LOG:  database system was shut down at 2018-01-25 11:01:24 CET
+2018-01-25 11:01:24.531 CET [27072] LOG:  database system is ready to accept connections
+2018-01-25 11:01:30.133 CET [27084] ERROR:  database "active_record_marginalia_test" is being accessed by other users
+2018-01-25 11:01:30.133 CET [27084] DETAIL:  There is 1 other session using the database.
+2018-01-25 11:01:30.133 CET [27084] STATEMENT:  DROP DATABASE active_record_marginalia_test;
+2018-01-25 11:01:30.148 CET [27072] LOG:  received fast shutdown request
+2018-01-25 11:01:30.150 CET [27072] LOG:  aborting any active transactions
+2018-01-25 11:01:30.150 CET [27082] FATAL:  terminating connection due to administrator command
+2018-01-25 11:01:30.151 CET [27072] LOG:  worker process: logical replication launcher (PID 27079) exited with exit code 1
+2018-01-25 11:01:30.152 CET [27074] LOG:  shutting down
+2018-01-25 11:01:30.166 CET [27072] LOG:  database system is shut down
+2018-01-25 11:01:53.638 CET [27247] LOG:  listening on IPv6 address "::1", port 5439
+2018-01-25 11:01:53.638 CET [27247] LOG:  listening on IPv4 address "127.0.0.1", port 5439
+2018-01-25 11:01:53.639 CET [27247] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5439"
+2018-01-25 11:01:53.651 CET [27248] LOG:  database system was shut down at 2018-01-25 11:01:53 CET
+2018-01-25 11:01:53.655 CET [27247] LOG:  database system is ready to accept connections
+2018-01-25 11:01:59.214 CET [27259] ERROR:  database "active_record_marginalia_test" is being accessed by other users
+2018-01-25 11:01:59.214 CET [27259] DETAIL:  There is 1 other session using the database.
+2018-01-25 11:01:59.214 CET [27259] STATEMENT:  DROP DATABASE active_record_marginalia_test;
+2018-01-25 11:01:59.223 CET [27247] LOG:  received fast shutdown request
+2018-01-25 11:01:59.225 CET [27247] LOG:  aborting any active transactions
+2018-01-25 11:01:59.225 CET [27257] FATAL:  terminating connection due to administrator command
+2018-01-25 11:01:59.226 CET [27247] LOG:  worker process: logical replication launcher (PID 27254) exited with exit code 1
+2018-01-25 11:01:59.227 CET [27249] LOG:  shutting down
+2018-01-25 11:01:59.237 CET [27247] LOG:  database system is shut down
+2018-01-25 11:02:00.632 CET [27273] LOG:  listening on IPv6 address "::1", port 5439
+2018-01-25 11:02:00.632 CET [27273] LOG:  listening on IPv4 address "127.0.0.1", port 5439
+2018-01-25 11:02:00.633 CET [27273] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5439"
+2018-01-25 11:02:00.644 CET [27274] LOG:  database system was shut down at 2018-01-25 11:02:00 CET
+2018-01-25 11:02:00.647 CET [27273] LOG:  database system is ready to accept connections
+2018-01-25 11:02:06.179 CET [27285] ERROR:  database "active_record_marginalia_test" is being accessed by other users
+2018-01-25 11:02:06.179 CET [27285] DETAIL:  There is 1 other session using the database.
+2018-01-25 11:02:06.179 CET [27285] STATEMENT:  DROP DATABASE active_record_marginalia_test;
+2018-01-25 11:02:06.199 CET [27273] LOG:  received fast shutdown request
+2018-01-25 11:02:06.199 CET [27273] LOG:  aborting any active transactions
+2018-01-25 11:02:06.199 CET [27283] FATAL:  terminating connection due to administrator command
+2018-01-25 11:02:06.200 CET [27273] LOG:  worker process: logical replication launcher (PID 27280) exited with exit code 1
+2018-01-25 11:02:06.201 CET [27275] LOG:  shutting down
+2018-01-25 11:02:06.215 CET [27273] LOG:  database system is shut down

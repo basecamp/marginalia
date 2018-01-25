@@ -3,7 +3,9 @@ require 'thread'
 
 module Marginalia
   def self.install
-    Marginalia::ActiveRecordInstrumentation.install
+    if defined? ActiveRecord
+      Marginalia::ActiveRecordInstrumentation.install
+    end
   end
 
   def self.set(key, value)
