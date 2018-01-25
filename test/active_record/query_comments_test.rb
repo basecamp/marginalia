@@ -29,14 +29,27 @@ class Post < ActiveRecord::Base
 end
 
 class ActiveRecordMarginaliaTest < MiniTest::Test
-  def setup
-    @db_instance = TestHelpers.create_db(
-      db_name: "active_record_marginalia_test",
-      db_port: 5439,
-      log_file: "active_record_logfile",
-    )
+  @@db_instance = TestHelpers.create_db(
+    db_name: "active_record_marginalia_test",
+    db_port: 5439,
+    log_file: "active_record_logfile",
+  )
 
-    create_test_table
+  def setup
+    ActiveRecord::Base.establish_connection({
+      :adapter  => ENV["DRIVER"] || "postgresql",
+      :host     => "localhost",
+      :port     => @@db_instance.port,
+      :username => ENV["DB_USERNAME"] || "root",
+      :database => @@db_instance.db_name,
+    })
+
+    unless Post.table_exists?
+      ActiveRecord::Schema.define do
+        create_table "posts", :force => true do |t|
+        end
+      end
+    end
 
     @queries = []
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
@@ -83,25 +96,6 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   def teardown
     Marginalia.clear!
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
-    TestHelpers.drop_db(instance: @db_instance)
-  end
-
-  private
-  def create_test_table
-    # TODO log all statements via log_statement=all
-    ActiveRecord::Base.establish_connection({
-      :adapter  => ENV["DRIVER"] || "postgresql",
-      :host     => "localhost",
-      :port     => @db_instance.port,
-      :username => ENV["DB_USERNAME"] || "root",
-      :database => @db_instance.db_name,
-    })
-
-    unless Post.table_exists?
-      ActiveRecord::Schema.define do
-        create_table "posts", :force => true do |t|
-        end
-      end
-    end
+    TestHelpers.drop_db(instance: @@db_instance)
   end
 end

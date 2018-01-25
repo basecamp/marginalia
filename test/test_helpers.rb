@@ -4,7 +4,7 @@ class TestHelpers
   end
 
   def self.drop_db(instance:)
-    PgInstance.destroy(instance: instance)
+    PgInstance.drop_db(instance.port, instance.db_name)
   end
 end
 
@@ -31,7 +31,7 @@ class PgInstance
   end
 
   def self.initialize_pg_cluster(dir)
-    %x[initdb -A trust -D #{dir}]
+    %x[initdb -A trust -D#{dir}]
   end
 
   def self.start_cluster(port, dir, log_file)
