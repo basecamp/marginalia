@@ -8,6 +8,7 @@ require 'active_record'
 require 'tmpdir'
 
 require 'active_record/connection_adapters/postgresql_adapter'
+require "test_helpers"
 
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
@@ -29,30 +30,13 @@ end
 
 class ActiveRecordMarginaliaTest < MiniTest::Test
   def setup
-    # TODO log all statements via log_statement=all
-    @@pg_dir = Dir.mktmpdir
-    @@pg_port = 5439
-    @@db_name = "active_record_marginalia_test"
-    @@log_file = "active_record_logfile"
+    @db_instance = TestHelpers.create_db(
+      db_name: "active_record_marginalia_test",
+      db_port: 5439,
+      log_file: "active_record_logfile",
+    )
 
-    %x[initdb -A trust -D #{@@pg_dir}]
-    %x[pg_ctl -o"-p #{@@pg_port}" -D#{@@pg_dir} -l#{@@log_file} start]
-    %x[createdb -p#{@@pg_port} #{@@db_name}]
-
-    ActiveRecord::Base.establish_connection({
-      :adapter  => ENV["DRIVER"] || "postgresql",
-      :host     => "localhost",
-      :port     => @@pg_port,
-      :username => ENV["DB_USERNAME"] || "root",
-      :database => @@db_name
-    })
-
-    unless Post.table_exists?
-      ActiveRecord::Schema.define do
-        create_table "posts", :force => true do |t|
-        end
-      end
-    end
+    create_test_table
 
     @queries = []
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
@@ -99,8 +83,25 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   def teardown
     Marginalia.clear!
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
-    system("dropdb -p#{@@pg_port} #{@@db_name}")
-    system("pg_ctl -o'-p #{@@pg_port}' -D#{@@pg_dir} -l logfile stop")
-    system("rm #{@@log_file}")
+    TestHelpers.drop_db(instance: @db_instance)
+  end
+
+  private
+  def create_test_table
+    # TODO log all statements via log_statement=all
+    ActiveRecord::Base.establish_connection({
+      :adapter  => ENV["DRIVER"] || "postgresql",
+      :host     => "localhost",
+      :port     => @db_instance.port,
+      :username => ENV["DB_USERNAME"] || "root",
+      :database => @db_instance.db_name,
+    })
+
+    unless Post.table_exists?
+      ActiveRecord::Schema.define do
+        create_table "posts", :force => true do |t|
+        end
+      end
+    end
   end
 end
