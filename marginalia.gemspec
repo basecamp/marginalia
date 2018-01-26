@@ -18,5 +18,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "minitest"
   gem.add_development_dependency "mocha"
 
-  gem.summary = gem.description = %q{Attach comments to your ActiveRecord queries.}
+  gem.summary = gem.description = %q{Attach comments to your ActiveRecord/Sequel queries.}
 end
