@@ -6,6 +6,19 @@ class TestHelpers
   def self.drop_db(instance:)
     PgInstance.drop_db(instance.port, instance.db_name)
   end
+
+  def self.file_contains_string(file, string)
+    def file_contains_regexp?(filename,regexp)
+      File.foreach(filename) do |line|
+        return true if line =~ regexp
+      end
+      false
+    end
+  end
+
+  def self.truncate_file(file)
+    File.truncate(file, 0)
+  end
 end
 
 class PgInstance
