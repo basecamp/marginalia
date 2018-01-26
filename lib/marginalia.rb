@@ -1,10 +1,11 @@
-require 'marginalia/active_record_instrumentation'
 require 'thread'
+require 'marginalia/pg_instrumentation'
 
 module Marginalia
   def self.install
-    if defined? ActiveRecord
-      Marginalia::ActiveRecordInstrumentation.install
+    if defined? ActiveRecord::ConnectionAdapters::PostgreSQLAdapter ||
+          Sequel::Postgres::USES_PG
+      Marginalia::PgInstrumentation.install
     end
   end
 
