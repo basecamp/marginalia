@@ -32,6 +32,7 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   DB_PORT=5439
   DB_NAME="active_record_marginalia_test"
   LOG_FILE="active_record_logfile"
+
   @@db_instance = TestHelpers.create_db(
     db_name: DB_NAME,
     db_port: DB_PORT,
@@ -56,55 +57,37 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   unless Post.table_exists?
     ActiveRecord::Schema.define do
       create_table "posts", :force => true do |t|
+        t.string :foo
       end
     end
   end
 
   def setup
-    @queries = []
-    ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
-      @queries << args.last[:sql]
-    end
-
     Marginalia.install
     Marginalia.set('app', 'rails')
   end
 
-  # def test_double_annotate
-  #   ActiveRecord::Base.connection.expects(:annotate_sql).returns("select id from posts").once
-  #   ActiveRecord::Base.connection.send(:select, "select id from posts")
-  # ensure
-  #   ActiveRecord::Base.connection.unstub(:annotate_sql)
-  # end
-
-  # def test_query_commenting_on_postgres_update
-  #   ActiveRecord::Base.connection.expects(:annotate_sql).returns("update posts set id = 1").once
-  #   ActiveRecord::Base.connection.send(:exec_update, "update posts set id = 1")
-  # ensure
-  #   ActiveRecord::Base.connection.unstub(:annotate_sql)
-  # end
-
-  # def test_query_commenting_on_postgres_delete
-  #   ActiveRecord::Base.connection.expects(:annotate_sql).returns("delete from posts where id = 1").once
-  #   ActiveRecord::Base.connection.send(:exec_delete, "delete from posts where id = 1")
-  # ensure
-  #   ActiveRecord::Base.connection.unstub(:annotate_sql)
-  # end
-
-  # def test_configuring_application
-  #   Marginalia.set('app', 'customapp')
-  #   Post.all.to_a
-  #   assert_match %r{/\*app:customapp\*/$}, @queries.first
-  # end
+  def test_configuring_application
+    Marginalia.set('app', 'customapp')
+    Post.all.to_a
+    assert TestHelpers.file_contains_string(LOG_FILE, "/* app:customapp */")
+  end
 
   def test_configuring_query_components
     Marginalia.set('controller', 'posts')
     Post.all.to_a
-    assert_match %r{/\*app:rails,controller:posts\*/$}, @queries.first
+    assert TestHelpers.file_contains_string(LOG_FILE, "/* app:rails,controller:posts*/")
+  end
+
+  def test_update_statement_contains_comment
+    Post.create({foo: "foo"})
+    TestHelpers.truncate_file(LOG_FILE)
+    Post.update(1, { foo: "bar" })
+    assert TestHelpers.file_contains_string(LOG_FILE, "/* app:rails */")
   end
 
   def teardown
     Marginalia.clear!
-    ActiveSupport::Notifications.unsubscribe "sql.active_record"
+    TestHelpers.truncate_file(LOG_FILE)
   end
 end
