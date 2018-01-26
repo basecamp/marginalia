@@ -5,9 +5,6 @@ require 'mocha/test_unit'
 require 'logger'
 require 'pp'
 require 'active_record'
-require 'tmpdir'
-
-require 'active_record/connection_adapters/postgresql_adapter'
 require "test_helpers"
 
 # Shim for compatibility with older versions of MiniTest
@@ -33,7 +30,7 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   DB_NAME="active_record_marginalia_test"
   LOG_FILE="active_record_logfile"
 
-  @@db_instance = TestHelpers.create_db(
+  TestHelpers.create_db(
     db_name: DB_NAME,
     db_port: DB_PORT,
     log_file: LOG_FILE,
@@ -70,20 +67,20 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   def test_configuring_application
     Marginalia.set('app', 'customapp')
     Post.all.to_a
-    assert TestHelpers.file_contains_string(LOG_FILE, "/* app:customapp */")
+    assert TestHelpers.file_contains_string(LOG_FILE, "/*app:customapp*/")
   end
 
   def test_configuring_query_components
     Marginalia.set('controller', 'posts')
     Post.all.to_a
-    assert TestHelpers.file_contains_string(LOG_FILE, "/* app:rails,controller:posts*/")
+    assert TestHelpers.file_contains_string(LOG_FILE, "/*app:rails,controller:posts*/")
   end
 
   def test_update_statement_contains_comment
     Post.create({foo: "foo"})
     TestHelpers.truncate_file(LOG_FILE)
     Post.update(1, { foo: "bar" })
-    assert TestHelpers.file_contains_string(LOG_FILE, "/* app:rails */")
+    assert TestHelpers.file_contains_string(LOG_FILE, "/*app:rails*/")
   end
 
   def teardown

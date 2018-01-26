@@ -7,13 +7,12 @@ class TestHelpers
     PgInstance.drop_db(instance.port, instance.db_name)
   end
 
-  def self.file_contains_string(file, string)
-    def file_contains_regexp?(filename,regexp)
-      File.foreach(filename) do |line|
-        return true if line =~ regexp
-      end
-      false
+  def self.file_contains_string(file, string, debug=false)
+    File.foreach(file) do |line|
+      puts line if debug
+      return true if line.include?(string)
     end
+    false
   end
 
   def self.truncate_file(file)

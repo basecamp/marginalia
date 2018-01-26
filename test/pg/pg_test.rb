@@ -37,7 +37,7 @@ class PgTest < MiniTest::Test
     # Enable logging of queries to log file
     query = <<~QUERY
     ALTER DATABASE #{DB_NAME};
-    SET log_statement = 'all';
+    SET log_statement = 'mod';
     QUERY
 
     @conn.exec(query)
@@ -55,14 +55,14 @@ class PgTest < MiniTest::Test
   def test_select_contains_comment
     select = "select * from posts;"
     @conn.exec(select)
-    assert TestHelpers.file_contains_string(LOG_FILE, '/* app:foobar */')
+    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:foobar*/')
   end
 
   def test_crud_actions_contain_comment
     Marginalia.set('app', 'sync')
     create_record = "INSERT INTO POSTS VALUES (1, 'My Title')"
     @conn.exec(create_record)
-    assert TestHelpers.file_contains_string(LOG_FILE, '/* app:sync */')
+    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:sync*/')
 
     TestHelpers.truncate_file(LOG_FILE)
 
@@ -74,14 +74,14 @@ class PgTest < MiniTest::Test
     UPDATE
     @conn.exec(update_query)
 
-    assert TestHelpers.file_contains_string(LOG_FILE, '/* app:api */')
+    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:api*/')
     TestHelpers.truncate_file(LOG_FILE)
 
     Marginalia.set('app', 'foo')
     delete_record = "DELETE FROM POSTS where id = 2"
     @conn.exec(delete_record)
 
-    assert TestHelpers.file_contains_string(LOG_FILE, '/* app:foo */')
+    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:foo*/')
   end
 
   def teardown

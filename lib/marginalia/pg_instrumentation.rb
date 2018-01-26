@@ -2,7 +2,7 @@ require 'marginalia'
 require 'pg'
 
 module Marginalia
-  module PgMonkeyPatch
+  module PgConnectionMonkeyPatch
     def exec(sql)
       comment = Marginalia.construct_comment
       if comment && comment != "" && !sql.include?(comment)
@@ -26,7 +26,11 @@ end
 module Marginalia
   module PgInstrumentation
     def self.install
-      PG::Connection.prepend(Marginalia::PgMonkeyPatch)
+      if defined? ::Sequel::Postgres::Adapter
+        ::Sequel::Postgres::Adapter.prepend(Marginalia::PgConnectionMonkeyPatch)
+      else
+        PG::Connection.prepend(Marginalia::PgConnectionMonkeyPatch)
+      end
     end
   end
 end
