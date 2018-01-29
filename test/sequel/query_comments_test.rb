@@ -26,7 +26,6 @@ class PgTest < MiniTest::Test
   )
 
   query = <<~QUERY
-    ALTER DATABASE #{DB_NAME};
     SET log_statement = 'all';
   QUERY
   DB.run(query)
@@ -35,15 +34,8 @@ class PgTest < MiniTest::Test
 
   TestHelpers.truncate_file(LOG_FILE)
 
-  def setup
-    # Override pg logic
-    Marginalia.install
-
-    # Configure app
-    Marginalia.set('app', 'foobar')
-
-    @dataset = DB[:posts]
-  end
+  # Override pg logic
+  Marginalia.install
 
   def test_raw_sql_has_comments
     Marginalia.set('app', 'foobar')

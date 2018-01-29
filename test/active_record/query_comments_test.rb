@@ -20,50 +20,47 @@ if defined?(Rails) && !defined?(Rails.env)
 end
 
 require 'marginalia'
+Marginalia.install
+
 RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 
 class Post < ActiveRecord::Base
 end
 
-class ActiveRecordMarginaliaTest < MiniTest::Test
-  DB_PORT=5439
-  DB_NAME="active_record_marginalia_test"
-  LOG_FILE="active_record_logfile"
+DB_PORT=5439
+DB_NAME="active_record_marginalia_test"
+LOG_FILE="active_record_logfile"
 
-  TestHelpers.create_db(
-    db_name: DB_NAME,
-    db_port: DB_PORT,
-    log_file: LOG_FILE,
-  )
+TestHelpers.create_db(
+  db_name: DB_NAME,
+  db_port: DB_PORT,
+  log_file: LOG_FILE,
+)
 
-  ActiveRecord::Base.establish_connection({
-    :adapter  => "postgresql",
-    :host     => "localhost",
-    :port     => DB_PORT,
-    :username => ENV["DB_USERNAME"] || "root",
-    :database => DB_NAME,
-  })
+ActiveRecord::Base.establish_connection({
+  :adapter  => "postgresql",
+  :host     => "localhost",
+  :port     => DB_PORT,
+  :username => ENV["DB_USERNAME"] || "root",
+  :database => DB_NAME,
+})
 
-  # Enable logging of queries to log file
-  query = <<~QUERY
-    ALTER DATABASE #{DB_NAME};
-    SET log_statement = 'all';
-  QUERY
-  ActiveRecord::Base.connection.execute(query)
+# Enable logging of queries to log file
+query = <<~QUERY
+  SET log_statement = 'all';
+QUERY
+ActiveRecord::Base.connection.execute(query)
 
-  unless Post.table_exists?
-    ActiveRecord::Schema.define do
-      create_table "posts", :force => true do |t|
-        t.string :foo
-      end
+unless Post.table_exists?
+  ActiveRecord::Schema.define do
+    create_table "posts", :force => true do |t|
+      t.string :foo
     end
   end
+end
 
-  def setup
-    Marginalia.install
-    Marginalia.set('app', 'rails')
-  end
 
+class ActiveRecordMarginaliaTest < MiniTest::Test
   def test_configuring_application
     Marginalia.set('app', 'customapp')
     Post.all.to_a
@@ -71,16 +68,18 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   end
 
   def test_configuring_query_components
+    Marginalia.set('app', 'rails')
     Marginalia.set('controller', 'posts')
     Post.all.to_a
     assert TestHelpers.file_contains_string(LOG_FILE, "/*app:rails,controller:posts*/")
   end
 
   def test_update_statement_contains_comment
+    Marginalia.set('app', 'sinatra')
     Post.create({foo: "foo"})
     TestHelpers.truncate_file(LOG_FILE)
     Post.update(1, { foo: "bar" })
-    assert TestHelpers.file_contains_string(LOG_FILE, "/*app:rails*/")
+    assert TestHelpers.file_contains_string(LOG_FILE, "/*app:sinatra*/")
   end
 
   def teardown
