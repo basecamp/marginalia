@@ -6,6 +6,7 @@ require 'logger'
 require 'pp'
 require 'active_record'
 require "test_helpers"
+require 'tempfile'
 
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
@@ -29,7 +30,7 @@ end
 
 DB_PORT=5439
 DB_NAME="active_record_marginalia_test"
-LOG_FILE="active_record_logfile"
+LOG_FILE=Tempfile.new("active_record_logfile").path
 
 TestHelpers.create_db(
   db_name: DB_NAME,

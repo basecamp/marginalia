@@ -3,13 +3,14 @@ require 'mocha/test_unit'
 require 'pg'
 require 'marginalia'
 require 'test_helpers'
+require 'tempfile'
 
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 
 DB_NAME='pg_test'
 DB_PORT=5455
-LOG_FILE='pg_log'
+LOG_FILE=Tempfile.new('pg_log').path
 
 # Override pg logic
 Marginalia.install

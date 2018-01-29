@@ -4,6 +4,7 @@ require 'logger'
 require 'sequel'
 require 'marginalia'
 require 'test_helpers'
+require "tempfile"
 
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
@@ -11,7 +12,7 @@ MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 class PgTest < MiniTest::Test
   DB_PORT=5457
   DB_NAME='sequel_test'
-  LOG_FILE='sequel_log'
+  LOG_FILE=Tempfile.new('sequel_log').path
 
   TestHelpers.create_db(
     db_name: DB_NAME,
