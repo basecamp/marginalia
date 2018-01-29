@@ -23,14 +23,11 @@ class PgTest < MiniTest::Test
     DB_NAME,
     host: 'localhost',
     port: DB_PORT,
-    logger: Logger.new(LOG_FILE)
   )
-
-  DB.loggers << Logger.new($stdout)
 
   query = <<~QUERY
     ALTER DATABASE #{DB_NAME};
-    SET log_statement = 'mod';
+    SET log_statement = 'all';
   QUERY
   DB.run(query)
 
@@ -53,5 +50,25 @@ class PgTest < MiniTest::Test
     dataset = DB.from(:posts)
     dataset.all
     assert TestHelpers.file_contains_string(LOG_FILE, '/*app:foobar*/')
+  end
+
+  def test_crud_actions_contain_comment
+    Marginalia.set('app', 'crud.insert')
+    posts = DB.from(:posts)
+    posts.insert(id: 1, title: "Insert")
+    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:crud.insert*/')
+
+    Marginalia.set('app', 'crud.update')
+    posts.where(id: 1).update(title: "Update")
+    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:crud.update*/')
+
+    Marginalia.set('app', 'crud.delete')
+    posts.where(id: 1).delete
+    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:crud.delete*/')
+  end
+
+  def teardown
+    # truncate log file after each test run
+    TestHelpers.truncate_file(LOG_FILE)
   end
 end

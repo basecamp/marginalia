@@ -26,11 +26,7 @@ end
 module Marginalia
   module PgInstrumentation
     def self.install
-      if defined? ::Sequel::Postgres::Adapter
-        ::Sequel::Postgres::Adapter.prepend(Marginalia::PgConnectionMonkeyPatch)
-      else
-        PG::Connection.prepend(Marginalia::PgConnectionMonkeyPatch)
-      end
+      PG::Connection.prepend(Marginalia::PgConnectionMonkeyPatch)
     end
   end
 end
