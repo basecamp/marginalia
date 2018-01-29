@@ -80,6 +80,7 @@ class PgTest < MiniTest::Test
 
   def teardown
     # truncate log file after each test run
+    Marginalia.clear!
     TestHelpers.truncate_file(LOG_FILE)
   end
 end
