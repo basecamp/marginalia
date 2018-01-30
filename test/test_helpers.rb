@@ -39,7 +39,7 @@ class PgInstance
 
   def self.start_cluster(port, dir, log_file)
     %x[pg_ctl -o"-p #{port}" -D#{dir} -l#{log_file} start]
-    system("while ! nc -z 127.0.0.1 5455; do sleep 0.0001; done")
+    sleep 5
   end
 
   def self.create_db(port, name)
