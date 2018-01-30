@@ -3,6 +3,9 @@ language: ruby
 rvm:
   - 2.5.0
 
+services:
+  - postgresql
+
 sudo: false
 
 before_install:
