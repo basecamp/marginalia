@@ -8,18 +8,12 @@ require 'tempfile'
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 
-DB_NAME='pg_test'
 DB_PORT=5455
-LOG_FILE=Tempfile.new('pg_log').path
+DB_NAME="marginalia_test"
+LOG_FILE="tmp/marginalia_log"
 
 # Override pg logic
 Marginalia.install
-
-TestHelpers.create_db(
-  db_name: DB_NAME,
-  db_port: DB_PORT,
-  log_file: LOG_FILE
-)
 
 # create pg connection
 $conn = PG.connect({
@@ -36,8 +30,14 @@ QUERY
 
 $conn.exec(query)
 
+drop_posts = <<~QUERY
+DROP TABLE IF EXISTS posts;
+QUERY
+
+$conn.exec(drop_posts)
+
 create_posts = <<~QUERY
-CREATE TABLE IF NOT EXISTS posts (
+CREATE TABLE posts (
   id INTEGER,
   title VARCHAR
 );

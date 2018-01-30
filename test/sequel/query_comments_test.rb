@@ -9,17 +9,11 @@ require "tempfile"
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 
+DB_PORT=5455
+DB_NAME="marginalia_test"
+LOG_FILE="tmp/marginalia_log"
+
 class PgTest < MiniTest::Test
-  DB_PORT=5457
-  DB_NAME='sequel_test'
-  LOG_FILE=Tempfile.new('sequel_log').path
-
-  TestHelpers.create_db(
-    db_name: DB_NAME,
-    db_port: DB_PORT,
-    log_file: LOG_FILE,
-  )
-
   DB = Sequel.postgres(
     DB_NAME,
     host: 'localhost',
@@ -31,7 +25,8 @@ class PgTest < MiniTest::Test
   QUERY
   DB.run(query)
 
-  DB.run "CREATE TABLE IF NOT EXISTS posts (id INTEGER, title VARCHAR(255));"
+  DB.run "DROP TABLE IF EXISTS posts"
+  DB.run "CREATE TABLE posts (id INTEGER, title VARCHAR(255));"
 
   TestHelpers.truncate_file(LOG_FILE)
 

@@ -7,6 +7,12 @@ class TestHelpers
     PgInstance.drop_db(instance.port, instance.db_name)
   end
 
+  def self.copy_pid(instance:, to_file:)
+    pidfile = "#{instance.directory}/postmaster.pid"
+    pid = File.open(pidfile) {|f| f.readline }
+    File.open(to_file, "a") { |f| f.puts pid }
+  end
+
   def self.file_contains_string(file, string, debug=false)
     File.foreach(file) do |line|
       puts line if debug
@@ -24,25 +30,22 @@ class PgInstance
   attr_reader :directory, :port, :db_name, :db_log_file
 
   def initialize(directory, name, port, log_file)
-    @directory = Dir.mktmpdir
+    @directory = directory
     @port = port
     @db_name = name
     @db_log_file = log_file
   end
 
   def self.create(name, port, log_file)
-    dir = self.create_tmp_dir
+    dir = "tmp"
     self.initialize_pg_cluster(dir)
     self.start_cluster(port, dir, log_file)
     self.create_db(port, name)
     new(dir, name, port, log_file)
   end
 
-  def self.create_tmp_dir
-    Dir.mktmpdir
-  end
-
   def self.initialize_pg_cluster(dir)
+    %x[mkdir -p "tmp"]
     %x[initdb -A trust -D#{dir}]
   end
 

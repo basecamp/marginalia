@@ -28,15 +28,9 @@ RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 class Post < ActiveRecord::Base
 end
 
-DB_PORT=5439
-DB_NAME="active_record_marginalia_test"
-LOG_FILE=Tempfile.new("active_record_logfile").path
-
-TestHelpers.create_db(
-  db_name: DB_NAME,
-  db_port: DB_PORT,
-  log_file: LOG_FILE,
-)
+DB_PORT=5455
+DB_NAME="marginalia_test"
+LOG_FILE="tmp/marginalia_log"
 
 ActiveRecord::Base.establish_connection({
   :adapter  => "postgresql",
@@ -52,11 +46,16 @@ query = <<~QUERY
 QUERY
 ActiveRecord::Base.connection.execute(query)
 
-unless Post.table_exists?
-  ActiveRecord::Schema.define do
-    create_table "posts", :force => true do |t|
-      t.string :foo
-    end
+drop_posts = <<~QUERY
+DROP TABLE IF EXISTS posts;
+QUERY
+
+ActiveRecord::Base.connection.execute(drop_posts)
+
+
+ActiveRecord::Schema.define do
+  create_table "posts", :force => true do |t|
+    t.string :title
   end
 end
 
@@ -77,9 +76,9 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
 
   def test_update_statement_contains_comment
     Marginalia.set('app', 'sinatra')
-    Post.create({foo: "foo"})
+    Post.create({title: "foo"})
     TestHelpers.truncate_file(LOG_FILE)
-    Post.update(1, { foo: "bar" })
+    Post.update(1, { title: "bar" })
     assert TestHelpers.file_contains_string(LOG_FILE, "/*app:sinatra*/")
   end
 
