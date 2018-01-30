@@ -39,6 +39,7 @@ class PgInstance
 
   def self.start_cluster(port, dir, log_file)
     %x[pg_ctl -o"-p #{port}" -D#{dir} -l#{log_file} start]
+    sleep 0.1
   end
 
   def self.create_db(port, name)
