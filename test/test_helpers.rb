@@ -3,19 +3,8 @@ class TestHelpers
     PgInstance.create(db_name, db_port, log_file)
   end
 
-  def self.drop_db(instance:)
-    PgInstance.drop_db(instance.port, instance.db_name)
-  end
-
-  def self.copy_pid(instance:, to_file:)
-    pidfile = "#{instance.directory}/postmaster.pid"
-    pid = File.open(pidfile) {|f| f.readline }
-    File.open(to_file, "a") { |f| f.puts pid }
-  end
-
-  def self.file_contains_string(file, string, debug=false)
+  def self.file_contains_string(file, string)
     File.foreach(file) do |line|
-      puts line if debug
       return true if line.include?(string)
     end
     false
@@ -57,21 +46,7 @@ class PgInstance
     %x[createdb -p#{port} #{name}]
   end
 
-  def self.destroy(instance:)
-    self.drop_db(instance.port, instance.db_name)
-    self.stop_cluster(instance.port, instance.directory)
-    self.remove_logfile(instance.db_log_file)
-  end
-
-  def self.drop_db(port, name)
-    system("dropdb -p#{port} #{name}")
-  end
-
   def self.stop_cluster(port, directory)
     system("pg_ctl -o'-p #{port}' -D#{directory} stop")
-  end
-
-  def self.remove_logfile(logfile)
-    system("rm #{logfile}")
   end
 end
