@@ -34,7 +34,6 @@ class PgInstance
   end
 
   def self.initialize_pg_cluster(dir)
-    %x[mkdir -p "tmp"]
     %x[initdb -A trust -D#{dir}]
   end
 
@@ -47,6 +46,6 @@ class PgInstance
   end
 
   def self.stop_cluster(port, directory)
-    system("pg_ctl -o'-p #{port}' -D#{directory} stop")
+    system("pg_ctl -o'-p #{port}' -D#{directory} stop") if File.directory?("tmp")
   end
 end
