@@ -54,6 +54,27 @@ class PgTest < MiniTest::Test
     assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:foobar*/')
   end
 
+  def test_async_exec_contains_comment
+    Marginalia.set('app', 'async_exec')
+    select = "select * from posts;"
+    $conn.async_exec(select)
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:async_exec*/')
+  end
+
+  def test_query_contains_comment
+    Marginalia.set('app', 'query')
+    select = "select * from posts;"
+    $conn.query(select)
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:query*/')
+  end
+
+  def test_async_query_contains_comment
+    Marginalia.set('app', 'async_query')
+    select = "select * from posts;"
+    $conn.async_query(select)
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:async_query*/')
+  end
+
   def test_crud_actions_contain_comment
     Marginalia.set('app', 'crud.insert')
     create_record = "INSERT INTO POSTS VALUES (1, 'My Title')"

@@ -12,7 +12,25 @@ module Marginalia
       end
     end
 
+    def query(sql, *args)
+      comment = Marginalia.construct_comment
+      if comment && comment != "" && !sql.include?(comment)
+        super "#{sql} #{comment}", *args
+      else
+        super sql, *args
+      end
+    end
+
     def async_exec(sql, *args)
+      comment = Marginalia.construct_comment
+      if comment && comment != "" && !sql.include?(comment)
+        super "#{sql} #{comment}", *args
+      else
+        super sql, *args
+      end
+    end
+
+    def async_query(sql, *args)
       comment = Marginalia.construct_comment
       if comment && comment != "" && !sql.include?(comment)
         super "#{sql} #{comment}", *args
