@@ -43,22 +43,26 @@ QUERY
 $conn.exec(create_posts)
 
 class PgTest < MiniTest::Test
+  def setup
+    Marginalia.set('adapter', 'pg')
+  end
+
   def test_select_contains_comment
     Marginalia.set('app', 'foobar')
     select = "select * from posts;"
     $conn.exec(select)
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:foobar*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:foobar*/')
   end
 
   def test_crud_actions_contain_comment
-    Marginalia.set('app', 'sync')
+    Marginalia.set('app', 'crud.insert')
     create_record = "INSERT INTO POSTS VALUES (1, 'My Title')"
     $conn.exec(create_record)
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:sync*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:crud.insert*/')
 
     TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
 
-    Marginalia.set('app', 'api')
+    Marginalia.set('app', 'crud.update')
     update_query = <<~UPDATE
     UPDATE posts
     SET id = 2
@@ -66,14 +70,14 @@ class PgTest < MiniTest::Test
     UPDATE
     $conn.exec(update_query)
 
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:api*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:crud.update*/')
     TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
 
-    Marginalia.set('app', 'foo')
+    Marginalia.set('app', 'crud.delete')
     delete_record = "DELETE FROM POSTS where id = 2"
     $conn.exec(delete_record)
 
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:foo*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:crud.delete*/')
   end
 
   def teardown

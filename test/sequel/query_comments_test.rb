@@ -31,26 +31,30 @@ class PgTest < MiniTest::Test
   # Override pg logic
   Marginalia.install
 
+  def setup
+    Marginalia.set('adapter', 'sequel')
+  end
+
   def test_raw_sql_has_comments
     Marginalia.set('app', 'foobar')
     dataset = DB.from(:posts)
     dataset.all
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:foobar*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:sequel,app:foobar*/')
   end
 
   def test_crud_actions_contain_comment
     Marginalia.set('app', 'crud.insert')
     posts = DB.from(:posts)
     posts.insert(id: 1, title: "Insert")
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:crud.insert*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:sequel,app:crud.insert*/')
 
     Marginalia.set('app', 'crud.update')
     posts.where(id: 1).update(title: "Update")
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:crud.update*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:sequel,app:crud.update*/')
 
     Marginalia.set('app', 'crud.delete')
     posts.where(id: 1).delete
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:crud.delete*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:sequel,app:crud.delete*/')
   end
 
   def teardown

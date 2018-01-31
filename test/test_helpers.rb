@@ -7,7 +7,7 @@ class TestHelpers
     File.foreach(file) do |line|
       return true if line.include?(string)
     end
-    false
+    raise "Expected to find string #{string} in file #{file}"
   end
 
   def self.truncate_file(file)

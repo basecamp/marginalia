@@ -58,25 +58,28 @@ end
 
 
 class ActiveRecordMarginaliaTest < MiniTest::Test
+  def setup
+    Marginalia.set('adapter', 'active_record')
+  end
+
   def test_configuring_application
     Marginalia.set('app', 'customapp')
     Post.all.to_a
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*app:customapp*/")
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*adapter:active_record,app:customapp*/")
   end
 
-  def test_configuring_query_components
-    Marginalia.set('app', 'rails')
-    Marginalia.set('controller', 'posts')
-    Post.all.to_a
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*app:rails,controller:posts*/")
-  end
-
-  def test_update_statement_contains_comment
-    Marginalia.set('app', 'sinatra')
+  def test_crud_actions_contain_comment
+    Marginalia.set('app', 'crud.insert')
     Post.create({title: "foo"})
-    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*adapter:active_record,app:crud.insert*/")
+
+    Marginalia.set('app', 'crud.update')
     Post.update(1, { title: "bar" })
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*app:sinatra*/")
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*adapter:active_record,app:crud.update*/")
+
+    Marginalia.set('app', 'crud.delete')
+    Post.find(1).destroy
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*adapter:active_record,app:crud.delete*/")
   end
 
   def teardown
