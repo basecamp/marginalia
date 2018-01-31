@@ -26,8 +26,6 @@ class PgTest < MiniTest::Test
   DB.run "DROP TABLE IF EXISTS posts"
   DB.run "CREATE TABLE posts (id INTEGER, title VARCHAR(255));"
 
-  TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
-
   # Override pg logic
   Marginalia.install
 
@@ -60,6 +58,5 @@ class PgTest < MiniTest::Test
   def teardown
     # truncate log file after each test run
     Marginalia.clear!
-    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
   end
 end

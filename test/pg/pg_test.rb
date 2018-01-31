@@ -60,8 +60,6 @@ class PgTest < MiniTest::Test
     $conn.exec(create_record)
     assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:crud.insert*/')
 
-    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
-
     Marginalia.set('app', 'crud.update')
     update_query = <<~UPDATE
     UPDATE posts
@@ -71,8 +69,6 @@ class PgTest < MiniTest::Test
     $conn.exec(update_query)
 
     assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:crud.update*/')
-    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
-
     Marginalia.set('app', 'crud.delete')
     delete_record = "DELETE FROM POSTS where id = 2"
     $conn.exec(delete_record)
@@ -83,6 +79,5 @@ class PgTest < MiniTest::Test
   def teardown
     # truncate log file after each test run
     Marginalia.clear!
-    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
   end
 end

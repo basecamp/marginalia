@@ -9,10 +9,6 @@ class TestHelpers
     end
     raise "Expected to find string #{string} in file #{file}"
   end
-
-  def self.truncate_file(file)
-    File.truncate(file, 0)
-  end
 end
 
 class PgInstance

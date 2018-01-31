@@ -84,6 +84,5 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
 
   def teardown
     Marginalia.clear!
-    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
   end
 end
