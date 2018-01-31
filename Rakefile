@@ -1,12 +1,18 @@
 #!/usr/bin/env rake
 require "bundler/gem_tasks"
+require_relative "test/test_helpers"
+require "tempfile"
+
+DB_PORT=ENV['MARGINALIA_DB_PORT'] || 5455
+DB_NAME='marginalia_test'
+LOG_FILE=ENV['MARGINALIA_LOG_FILE'] || "tmp/marginalia_log"
 
 task :default => ['test:postgresql']
 
 namespace :test do
   desc "test PostgreSQL driver"
-  task :postgresql do
-    sh "DRIVER=postgresql DB_USERNAME=postgres ruby -Ilib -Itest test/*_test.rb"
+  task :postgresql => [:"db:postgresql:reset"] do
+    sh "set -e; for file in $(find test -type f -name '*_test.rb'); do MARGINALIA_LOG_FILE=#{LOG_FILE} MARGINALIA_DB_PORT=#{DB_PORT} ruby -Ilib -Itest $file; done"
   end
 end
 
@@ -20,12 +26,17 @@ namespace :db do
 
     desc "create PostgreSQL database"
     task :create do
-      sh 'createdb -U postgres marginalia_test'
+      instance = TestHelpers.create_db(
+        db_name: DB_NAME,
+        db_port: DB_PORT,
+        log_file: LOG_FILE,
+      )
     end
 
-    desc "drop PostgreSQL database"
+    desc "kill PostgreSQL database"
     task :drop do
-      sh 'psql -d postgres -U postgres -c "DROP DATABASE IF EXISTS marginalia_test"'
+      PgInstance.stop_cluster(DB_PORT, "tmp")
+      %x[rm -rf "tmp"] unless ENV['TRAVIS']
     end
   end
 end
