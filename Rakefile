@@ -36,7 +36,7 @@ namespace :db do
     desc "kill PostgreSQL database"
     task :drop do
       PgInstance.stop_cluster(DB_PORT, "tmp")
-      %x[rm -rf "tmp"]
+      %x[rm -rf "tmp"] unless ENV['TRAVIS']
     end
   end
 end

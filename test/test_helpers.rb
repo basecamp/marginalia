@@ -34,15 +34,11 @@ class PgInstance
   end
 
   def self.initialize_pg_cluster(dir)
-    if !ENV['TRAVIS']
-      %x[initdb -A trust -D#{dir}]
-    end
+      %x[initdb -A trust -D#{dir}] unless ENV['TRAVIS']
   end
 
   def self.start_cluster(port, dir, log_file)
-    if !ENV['TRAVIS']
-      %x[pg_ctl -o"-p #{port}" -D#{dir} -l#{log_file} start]
-    end
+    %x[pg_ctl -o"-p #{port}" -D#{dir} -l#{log_file} start] unless ENV['TRAVIS']
   end
 
   def self.create_db(port, name)
