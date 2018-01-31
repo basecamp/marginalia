@@ -9,7 +9,6 @@ require 'tempfile'
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 
 DB_NAME="marginalia_test"
-LOG_FILE="tmp/marginalia_log"
 
 # Override pg logic
 Marginalia.install
@@ -48,16 +47,16 @@ class PgTest < MiniTest::Test
     Marginalia.set('app', 'foobar')
     select = "select * from posts;"
     $conn.exec(select)
-    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:foobar*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:foobar*/')
   end
 
   def test_crud_actions_contain_comment
     Marginalia.set('app', 'sync')
     create_record = "INSERT INTO POSTS VALUES (1, 'My Title')"
     $conn.exec(create_record)
-    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:sync*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:sync*/')
 
-    TestHelpers.truncate_file(LOG_FILE)
+    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
 
     Marginalia.set('app', 'api')
     update_query = <<~UPDATE
@@ -67,19 +66,19 @@ class PgTest < MiniTest::Test
     UPDATE
     $conn.exec(update_query)
 
-    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:api*/')
-    TestHelpers.truncate_file(LOG_FILE)
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:api*/')
+    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
 
     Marginalia.set('app', 'foo')
     delete_record = "DELETE FROM POSTS where id = 2"
     $conn.exec(delete_record)
 
-    assert TestHelpers.file_contains_string(LOG_FILE, '/*app:foo*/')
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*app:foo*/')
   end
 
   def teardown
     # truncate log file after each test run
     Marginalia.clear!
-    TestHelpers.truncate_file(LOG_FILE)
+    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
   end
 end

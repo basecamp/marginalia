@@ -29,7 +29,6 @@ class Post < ActiveRecord::Base
 end
 
 DB_NAME="marginalia_test"
-LOG_FILE="tmp/marginalia_log"
 
 ActiveRecord::Base.establish_connection({
   :adapter  => "postgresql",
@@ -62,26 +61,26 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
   def test_configuring_application
     Marginalia.set('app', 'customapp')
     Post.all.to_a
-    assert TestHelpers.file_contains_string(LOG_FILE, "/*app:customapp*/")
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*app:customapp*/")
   end
 
   def test_configuring_query_components
     Marginalia.set('app', 'rails')
     Marginalia.set('controller', 'posts')
     Post.all.to_a
-    assert TestHelpers.file_contains_string(LOG_FILE, "/*app:rails,controller:posts*/")
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*app:rails,controller:posts*/")
   end
 
   def test_update_statement_contains_comment
     Marginalia.set('app', 'sinatra')
     Post.create({title: "foo"})
-    TestHelpers.truncate_file(LOG_FILE)
+    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
     Post.update(1, { title: "bar" })
-    assert TestHelpers.file_contains_string(LOG_FILE, "/*app:sinatra*/")
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*app:sinatra*/")
   end
 
   def teardown
     Marginalia.clear!
-    TestHelpers.truncate_file(LOG_FILE)
+    TestHelpers.truncate_file(ENV['MARGINALIA_LOG_FILE'])
   end
 end

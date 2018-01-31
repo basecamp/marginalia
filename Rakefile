@@ -5,14 +5,14 @@ require "tempfile"
 
 DB_PORT=ENV['MARGINALIA_DB_PORT'] || 5455
 DB_NAME='marginalia_test'
-LOG_FILE="tmp/marginalia_log"
+LOG_FILE=ENV['MARGINALIA_LOG_FILE'] || "tmp/marginalia_log"
 
 task :default => ['test:postgresql']
 
 namespace :test do
   desc "test PostgreSQL driver"
   task :postgresql => [:"db:postgresql:reset"] do
-    sh "for file in test/**/*_test.rb; do MARGINALIA_DB_PORT=#{DB_PORT} ruby -Ilib -Itest $file; done"
+    sh "for file in test/**/*_test.rb; do MARGINALIA_LOG_FILE=#{LOG_FILE} MARGINALIA_DB_PORT=#{DB_PORT} ruby -Ilib -Itest $file; done"
   end
 end
 
