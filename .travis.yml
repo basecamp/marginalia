@@ -18,4 +18,7 @@ sudo: false
 before_install:
   - bash -c "yes | gem uninstall -i /home/travis/.rvm/gems/ruby-2.5.0@global rake"
 
+before_script:
+  - sudo chmod 0644 $MARGINALIA_LOG_FILE
+
 script: bundle exec rake db:reset test:postgresql
