@@ -12,7 +12,7 @@ task :default => ['test:postgresql']
 namespace :test do
   desc "test PostgreSQL driver"
   task :postgresql => [:"db:postgresql:reset"] do
-    sh "for file in $(find test -type f -name '*_test.rb'); do MARGINALIA_LOG_FILE=#{LOG_FILE} MARGINALIA_DB_PORT=#{DB_PORT} ruby -Ilib -Itest $file; done"
+    sh "set -e; for file in $(find test -type f -name '*_test.rb'); do MARGINALIA_LOG_FILE=#{LOG_FILE} MARGINALIA_DB_PORT=#{DB_PORT} ruby -Ilib -Itest $file; done"
   end
 end
 
