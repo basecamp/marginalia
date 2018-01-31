@@ -28,15 +28,13 @@ RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 class Post < ActiveRecord::Base
 end
 
-DB_PORT=5455
 DB_NAME="marginalia_test"
 LOG_FILE="tmp/marginalia_log"
 
 ActiveRecord::Base.establish_connection({
   :adapter  => "postgresql",
   :host     => "localhost",
-  :port     => DB_PORT,
-  :username => ENV["DB_USERNAME"] || "root",
+  :port     => ENV['MARGINALIA_DB_PORT'],
   :database => DB_NAME,
 })
 

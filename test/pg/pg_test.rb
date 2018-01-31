@@ -8,7 +8,6 @@ require 'tempfile'
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 
-DB_PORT=5455
 DB_NAME="marginalia_test"
 LOG_FILE="tmp/marginalia_log"
 
@@ -18,9 +17,8 @@ Marginalia.install
 # create pg connection
 $conn = PG.connect({
   host: "localhost",
-  port: DB_PORT,
+  port: ENV['MARGINALIA_DB_PORT'],
   dbname: DB_NAME,
-  user: ENV["DB_USERNAME"] || `whoami`,
 })
 
 # Enable logging of queries to log file

@@ -9,6 +9,9 @@ addons:
 services:
   - postgresql
 
+env:
+  - MARGINALIA_DB_PORT=5432
+
 sudo: false
 
 before_install:

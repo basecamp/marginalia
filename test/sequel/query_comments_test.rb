@@ -9,7 +9,6 @@ require "tempfile"
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 
-DB_PORT=5455
 DB_NAME="marginalia_test"
 LOG_FILE="tmp/marginalia_log"
 
@@ -17,7 +16,7 @@ class PgTest < MiniTest::Test
   DB = Sequel.postgres(
     DB_NAME,
     host: 'localhost',
-    port: DB_PORT,
+    port: ENV['MARGINALIA_DB_PORT'],
   )
 
   query = <<~QUERY
