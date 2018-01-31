@@ -3,21 +3,21 @@ require 'pg'
 
 module Marginalia
   module PgConnectionMonkeyPatch
-    def exec(sql)
+    def exec(sql, *args)
       comment = Marginalia.construct_comment
       if comment && comment != "" && !sql.include?(comment)
-        super "#{sql} #{comment}"
+        super "#{sql} #{comment}", *args
       else
-        super sql
+        super sql, *args
       end
     end
 
-    def async_exec(sql, params=nil)
+    def async_exec(sql, *args)
       comment = Marginalia.construct_comment
       if comment && comment != "" && !sql.include?(comment)
-        super "#{sql} #{comment}"
+        super "#{sql} #{comment}", *args
       else
-        super sql
+        super sql, *args
       end
     end
   end
