@@ -38,6 +38,15 @@ module Marginalia
         super sql, *args
       end
     end
+
+    def prepare(statement_name, sql, *args)
+      comment = Marginalia.construct_comment
+      if comment && comment != "" && !sql.include?(comment)
+        super statement_name, "#{sql} #{comment}", *args
+      else
+        super statement_name, sql, *args
+      end
+    end
   end
 end
 
