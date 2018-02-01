@@ -54,6 +54,13 @@ class PgTest < MiniTest::Test
     assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:foobar*/')
   end
 
+  def test_conn_prepare
+    Marginalia.set('app', 'prepare')
+    $conn.prepare('statement1', 'INSERT INTO posts (id, title) VALUES ($1, $2)')
+    $conn.exec_prepared('statement1', [100, 'Welcome Tessa!'])
+    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], '/*adapter:pg,app:prepare*/')
+  end
+
   def test_async_exec_contains_comment
     Marginalia.set('app', 'async_exec')
     select = "select * from posts;"
