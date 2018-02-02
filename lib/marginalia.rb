@@ -3,10 +3,7 @@ require 'marginalia/pg_instrumentation'
 
 module Marginalia
   def self.install
-    if defined? ActiveRecord::ConnectionAdapters::PostgreSQLAdapter ||
-          Sequel::Postgres::USES_PG
-      Marginalia::PgInstrumentation.install
-    end
+    Marginalia::PgInstrumentation.install
   end
 
   def self.set(key, value)
