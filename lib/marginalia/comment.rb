@@ -88,6 +88,10 @@ module Marginalia
         marginalia_controller.action_name if marginalia_controller.respond_to? :action_name
       end
 
+      def self.sidekiq_job
+        marginalia_job["class"] if marginalia_job
+      end
+
       def self.line
         Marginalia::Comment.lines_to_ignore ||= /\.rvm|gem|vendor\/|marginalia|rbenv/
         last_line = caller.detect do |line|

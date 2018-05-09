@@ -1,5 +1,6 @@
 require 'marginalia/railtie'
 require 'marginalia/comment'
+require 'marginalia/sidekiq_instrumentation'
 
 module Marginalia
   mattr_accessor :application_name

@@ -23,6 +23,8 @@ require 'logger'
 require 'pp'
 require 'active_record'
 require 'action_controller'
+require 'sidekiq'
+require 'sidekiq/testing'
 
 if request_id_available?
   require 'action_dispatch/middleware/request_id'
@@ -80,6 +82,13 @@ if active_job_available?
     def perform
       Post.first
     end
+  end
+end
+
+class PostsSidekiqJob
+  include Sidekiq::Worker
+  def perform
+    Post.first
   end
 end
 
@@ -270,6 +279,23 @@ class MarginaliaTest < MiniTest::Test
       Post.first
       refute_match %{job:PostsJob}, @queries.last
     end
+  end
+
+  def test_sidekiq_job
+    Marginalia::Comment.components = [:sidekiq_job]
+    Marginalia::SidekiqInstrumentation.enable!
+
+    # Test harness does not run Sidekiq middlewares by default so include testing middleware.
+    Sidekiq::Testing.server_middleware do |chain|
+     chain.add Marginalia::SidekiqInstrumentation::Middleware
+    end
+
+    Sidekiq::Testing.fake!
+    PostsSidekiqJob.perform_async
+    PostsSidekiqJob.drain
+    assert_match %{sidekiq_job:PostsSidekiqJob}, @queries.first
+    Post.first
+    refute_match %{sidekiq_job:PostsSidekiqJob}, @queries.last
   end
 
   def teardown

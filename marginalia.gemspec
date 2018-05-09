@@ -20,6 +20,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "sqlite3"
   gem.add_development_dependency "minitest"
   gem.add_development_dependency "mocha"
+  gem.add_development_dependency "sidekiq"
 
   gem.summary = gem.description = %q{Attach comments to your ActiveRecord queries.}
 end
