@@ -26,7 +26,16 @@ module Marginalia
         end
       end
       ret.chop!
+      ret = self.escape_sql_comment(ret)
       ret
+    end
+
+    def self.escape_sql_comment(str)
+      str = str.dup
+      while str.include?('/*') || str.include?('*/')
+        str = str.gsub('/*', '').gsub('*/', '')
+      end
+      str
     end
 
     def self.clear!

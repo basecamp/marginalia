@@ -272,6 +272,15 @@ class MarginaliaTest < MiniTest::Test
     end
   end
 
+  def test_good_comment
+    assert_equal Marginalia::Comment.escape_sql_comment('app:foo'), 'app:foo'
+  end
+
+  def test_bad_comments
+    assert_equal Marginalia::Comment.escape_sql_comment('*/; DROP TABLE USERS;/*'), '; DROP TABLE USERS;'
+    assert_equal Marginalia::Comment.escape_sql_comment('**//; DROP TABLE USERS;/*'), '; DROP TABLE USERS;'
+  end
+
   def teardown
     Marginalia.application_name = nil
     Marginalia::Comment.lines_to_ignore = nil
