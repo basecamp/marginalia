@@ -25,3 +25,13 @@ env:
   - "RAILS_VERSION=4.2.0 TEST_RAILS_API=true"
   - "RAILS_VERSION=5.0.6 TEST_RAILS_API=true"
   - "RAILS_VERSION=5.1.5 TEST_RAILS_API=true"
+matrix:
+  exclude:
+    - rvm: 2.1
+      env: "RAILS_VERSION=5.0.6"
+    - rvm: 2.1
+      env: "RAILS_VERSION=5.0.6"
+    - rvm: 2.1
+      env: "RAILS_VERSION=5.0.6 TEST_RAILS_API=true"
+    - rvm: 2.1
+      env: "RAILS_VERSION=5.1.5 TEST_RAILS_API=true"
