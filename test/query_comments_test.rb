@@ -18,7 +18,7 @@ def adapter_pool_available?
 end
 
 require "minitest/autorun"
-require 'mocha/test_unit'
+require "mocha/minitest"
 require 'logger'
 require 'pp'
 require 'active_record'
@@ -100,7 +100,6 @@ unless Post.table_exists?
 end
 
 Marginalia::Railtie.insert
-
 
 class MarginaliaTest < MiniTest::Test
   def setup
