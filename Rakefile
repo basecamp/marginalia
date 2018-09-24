@@ -5,7 +5,7 @@ task :default => ['test:all']
 
 namespace :test do
   desc "test all drivers"
-  task :all => [:mysql, :mysql2, :postgresql, :sqlite]
+  task :all => [:mysql2, :postgresql, :sqlite]
 
   desc "test mysql driver"
   task :mysql do
