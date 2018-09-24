@@ -9,22 +9,22 @@ namespace :test do
 
   desc "test mysql driver"
   task :mysql do
-    sh "DRIVER=mysql ruby -Ilib -Itest test/*_test.rb"
+    sh "DRIVER=mysql bundle exec ruby -Ilib -Itest test/*_test.rb"
   end
 
   desc "test mysql2 driver"
   task :mysql2 do
-    sh "DRIVER=mysql2 ruby -Ilib -Itest test/*_test.rb"
+    sh "DRIVER=mysql2 bundle exec ruby -Ilib -Itest test/*_test.rb"
   end
-  
+
   desc "test PostgreSQL driver"
   task :postgresql do
-    sh "DRIVER=postgresql DB_USERNAME=postgres ruby -Ilib -Itest test/*_test.rb"
+    sh "DRIVER=postgresql DB_USERNAME=postgres bundle exec ruby -Ilib -Itest test/*_test.rb"
   end
-  
+
   desc "test sqlite3 driver"
   task :sqlite do
-    sh "DRIVER=sqlite3 ruby -Ilib -Itest test/*_test.rb"
+    sh "DRIVER=sqlite3 bundle exec ruby -Ilib -Itest test/*_test.rb"
   end
 end
 
@@ -62,5 +62,4 @@ namespace :db do
       sh 'psql -d postgres -U postgres -c "DROP DATABASE IF EXISTS marginalia_test"'
     end
   end
-
 end
