@@ -4,7 +4,6 @@ gemspec
 
 version = ENV["RAILS_VERSION"] || "4.2.0"
 
-gem 'mysql'
 if "4.2.5" > version
   gem 'mysql2', '~> 0.3.13'
 else
