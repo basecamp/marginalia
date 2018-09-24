@@ -1,8 +1,6 @@
 language: ruby
 
 rvm:
-  - 2.1
-  - 2.2
   - 2.3.1
   - 2.4.4
   - 2.5.1
@@ -12,26 +10,9 @@ sudo: false
 script: bundle exec rake db:reset test:all
 
 env:
-  - "RAILS_VERSION=3.1.12"
-  - "RAILS_VERSION=3.2.19"
-  - "RAILS_VERSION=4.0.8"
-  - "RAILS_VERSION=4.1.8"
   - "RAILS_VERSION=4.2.0"
   - "RAILS_VERSION=5.0.6"
   - "RAILS_VERSION=5.1.5"
-  - "RAILS_VERSION=3.2.19 TEST_RAILS_API=true"
-  - "RAILS_VERSION=4.0.8 TEST_RAILS_API=true"
-  - "RAILS_VERSION=4.1.8 TEST_RAILS_API=true"
   - "RAILS_VERSION=4.2.0 TEST_RAILS_API=true"
   - "RAILS_VERSION=5.0.6 TEST_RAILS_API=true"
   - "RAILS_VERSION=5.1.5 TEST_RAILS_API=true"
-matrix:
-  exclude:
-    - rvm: 2.1
-      env: "RAILS_VERSION=5.0.6"
-    - rvm: 2.1
-      env: "RAILS_VERSION=5.0.6"
-    - rvm: 2.1
-      env: "RAILS_VERSION=5.0.6 TEST_RAILS_API=true"
-    - rvm: 2.1
-      env: "RAILS_VERSION=5.1.5 TEST_RAILS_API=true"
