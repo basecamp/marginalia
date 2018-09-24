@@ -64,7 +64,11 @@ end
 class PostsController < ActionController::Base
   def driver_only
     ActiveRecord::Base.connection.execute "select id from posts"
-    render :nothing => true
+    if Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('5')
+      render body: nil
+    else
+      render nothing: true
+    end
   end
 end
 
