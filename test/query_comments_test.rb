@@ -190,19 +190,6 @@ class MarginaliaTest < MiniTest::Test
   def test_last_line_component
     Marginalia::Comment.components = [:line]
     PostsController.action(:driver_only).call(@env)
-
-    # Because "lines_to_ignore" by default includes "marginalia" and "gem", the
-    # extracted line line will be from the line in this file that actually
-    # triggers the query.
-    assert_match %r{/\*line:test/query_comments_test.rb:[0-9]+:in `driver_only'\*/$}, @queries.first
-  end
-
-  def test_last_line_component_with_lines_to_ignore
-    Marginalia::Comment.lines_to_ignore = /foo bar/
-    Marginalia::Comment.components = [:line]
-    PostsController.action(:driver_only).call(@env)
-    # Because "lines_to_ignore" does not include "marginalia", the extracted
-    # line will be from marginalia/comment.rb.
     assert_match %r{/\*line:.*lib/marginalia/comment.rb:[0-9]+}, @queries.first
   end
 
@@ -286,7 +273,6 @@ class MarginaliaTest < MiniTest::Test
 
   def teardown
     Marginalia.application_name = nil
-    Marginalia::Comment.lines_to_ignore = nil
     Marginalia::Comment.components = [:application, :controller, :action]
     ActiveSupport::Notifications.unsubscribe "sql.active_record"
   end

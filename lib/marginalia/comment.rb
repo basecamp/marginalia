@@ -2,7 +2,11 @@ require 'socket'
 
 module Marginalia
   module Comment
-    mattr_accessor :components, :lines_to_ignore
+    mattr_accessor :components
+    mattr_accessor :backtrace_cleaner do
+      ::ActiveSupport::BacktraceCleaner.new
+    end
+
     Marginalia::Comment.components ||= [:application, :controller, :action]
 
     def self.update!(controller = nil)
@@ -97,23 +101,7 @@ module Marginalia
       end
 
       def self.line
-        Marginalia::Comment.lines_to_ignore ||= /\.rvm|gem|vendor\/|marginalia|rbenv/
-        last_line = caller.detect do |line|
-          line !~ Marginalia::Comment.lines_to_ignore
-        end
-        if last_line
-          root = if defined?(Rails) && Rails.respond_to?(:root)
-            Rails.root.to_s
-          elsif defined?(RAILS_ROOT)
-            RAILS_ROOT
-          else
-            ""
-          end
-          if last_line.starts_with? root
-            last_line = last_line[root.length..-1]
-          end
-          last_line
-        end
+        backtrace_cleaner.clean(caller).first
       end
 
       def self.hostname
