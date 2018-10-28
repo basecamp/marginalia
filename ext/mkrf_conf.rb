@@ -12,7 +12,8 @@ begin
   if RUBY_VERSION < "2.4"
     installer.install "mysql", ">=0"
   end
-rescue
+rescue StandardError => e
+  puts(e)
   exit(1)
 end
 
