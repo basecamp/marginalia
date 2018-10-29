@@ -25,6 +25,6 @@ if ENV["TEST_RAILS_API"] == "true"
   gem "rails-api", "~> 0.2.1"
 end
 
-if RUBY_VERSION.start_with?('2.3')
+if RUBY_VERSION.start_with?('2.3') && version < '5.0.0'
   gem 'mysql'
 end
