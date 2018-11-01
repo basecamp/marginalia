@@ -5,12 +5,7 @@ task :default => ['test:all']
 
 namespace :test do
   desc "test all drivers"
-  begin
-    require 'mysql'
-    task :all => [:mysql, :mysql2, :postgresql, :sqlite]
-  rescue LoadError
-    task :all => [:mysql2, :postgresql, :sqlite]
-  end
+  task :all => [:mysql2, :postgresql, :sqlite]
 
   desc "test mysql driver"
   task :mysql do
