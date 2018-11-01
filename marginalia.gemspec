@@ -21,6 +21,4 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "mocha"
 
   gem.summary = gem.description = %q{Attach comments to your ActiveRecord queries.}
-
-  gem.extensions = ["ext/mkrf_conf.rb"]
 end
