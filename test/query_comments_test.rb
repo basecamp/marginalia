@@ -18,7 +18,7 @@ def adapter_pool_available?
 end
 
 require "minitest/autorun"
-require 'mocha/test_unit'
+require "mocha/minitest"
 require 'logger'
 require 'pp'
 require 'active_record'
@@ -66,7 +66,11 @@ end
 class PostsController < ActionController::Base
   def driver_only
     ActiveRecord::Base.connection.execute "select id from posts"
-    render :nothing => true
+    if Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('5')
+      render body: nil
+    else
+      render nothing: true
+    end
   end
 end
 
@@ -109,7 +113,6 @@ unless Post.table_exists?
 end
 
 Marginalia::Railtie.insert
-
 
 class MarginaliaTest < MiniTest::Test
   def setup
@@ -280,7 +283,7 @@ class MarginaliaTest < MiniTest::Test
       refute_match %{job:PostsJob}, @queries.last
     end
   end
-
+  
   def test_sidekiq_job
     Marginalia::Comment.components = [:sidekiq_job]
     Marginalia::SidekiqInstrumentation.enable!
@@ -296,6 +299,15 @@ class MarginaliaTest < MiniTest::Test
     assert_match %{sidekiq_job:PostsSidekiqJob}, @queries.first
     Post.first
     refute_match %{sidekiq_job:PostsSidekiqJob}, @queries.last
+  end
+
+  def test_good_comment
+    assert_equal Marginalia::Comment.escape_sql_comment('app:foo'), 'app:foo'
+  end
+
+  def test_bad_comments
+    assert_equal Marginalia::Comment.escape_sql_comment('*/; DROP TABLE USERS;/*'), '; DROP TABLE USERS;'
+    assert_equal Marginalia::Comment.escape_sql_comment('**//; DROP TABLE USERS;/*'), '; DROP TABLE USERS;'
   end
 
   def teardown
