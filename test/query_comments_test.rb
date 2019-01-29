@@ -218,6 +218,12 @@ class MarginaliaTest < MiniTest::Test
     assert_match %r{/\*controller_with_namespace:API::V1::PostsController}, @queries.first
   end
 
+  def test_controller_path
+    Marginalia::Comment.components = [:controller_path]
+    API::V1::PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*controller_path:api/v1/posts}, @queries.first
+  end
+
   if adapter_pool_available?
     def test_db_host
       Marginalia::Comment.components = [:db_host]

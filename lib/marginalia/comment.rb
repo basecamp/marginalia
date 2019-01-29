@@ -88,6 +88,10 @@ module Marginalia
         marginalia_controller.controller_name if marginalia_controller.respond_to? :controller_name
       end
 
+      def self.controller_path
+        marginalia_controller.controller_path if marginalia_controller.respond_to? :controller_path
+      end
+
       def self.controller_with_namespace
         marginalia_controller.class.name if marginalia_controller
       end
