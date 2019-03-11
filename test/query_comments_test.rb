@@ -315,10 +315,10 @@ class MarginaliaTest < MiniTest::Test
       Post.first
     end
     Post.first
-    assert_match %r{/\/\*foo\*\//$}, @queries.first
-    refute_match %r{/\/\*foo\*\//$}, @queries.last
+    assert_match %r{/\*foo\*/$}, @queries.first
+    refute_match %r{/\*foo\*/$}, @queries.last
     # Assert we're not adding an empty comment, either
-    refute_match %r{/\/\*\s*\*\//$}, @queries.last
+    refute_match %r{/\*\s*\*/$}, @queries.last
   end
 
   def test_nested_inline_annotations
@@ -331,10 +331,10 @@ class MarginaliaTest < MiniTest::Test
   end
 
   def test_bad_inline_annotations
-    Marginalia.with_annotation("*/; DROP TABLE USERS;/*'") do
+    Marginalia.with_annotation("*/; DROP TABLE USERS;/*") do
       Post.first
     end
-    Marginalia.with_annotation("**//; DROP TABLE USERS;//**'") do
+    Marginalia.with_annotation("**//; DROP TABLE USERS;//**") do
       Post.first
     end
     assert_match %r{/\*; DROP TABLE USERS;\*/$}, @queries.first
