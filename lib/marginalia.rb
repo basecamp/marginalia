@@ -52,7 +52,7 @@ module Marginalia
         sql = "#{sql} /*#{comment}*/"
       end
       inline_comment = Marginalia::Comment.construct_inline_comment
-      if inline_comment.present? && !sql.include?(inline_comment)
+      if inline_comment.present?
         sql = "#{sql} /*#{inline_comment}*/"
       end
       sql
