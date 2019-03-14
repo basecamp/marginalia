@@ -10,7 +10,7 @@ else
   gem 'mysql2', '>= 0.3.13', '< 0.5'
 end
 gem 'pg', '~> 0.15'
-gem 'sqlite3'
+gem 'sqlite3', '~> 1.3.6'
 
 rails = case version
 when "master"
