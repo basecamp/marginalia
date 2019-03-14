@@ -1,20 +1,16 @@
 language: ruby
-
-rvm:
-  - 2.3.1
-  - 2.4.4
-  - 2.5.1
-
 sudo: false
 
-script: bundle exec rake db:reset test:all
+rvm:
+  - 2.2
+  - 2.3
+  - 2.4
 
-env:
-  - "RAILS_VERSION=4.2.0"
-  - "RAILS_VERSION=5.0.7"
-  - "RAILS_VERSION=5.1.6"
-  - "RAILS_VERSION=5.2.2"
-  - "RAILS_VERSION=4.2.0 TEST_RAILS_API=true"
-  - "RAILS_VERSION=5.0.7 TEST_RAILS_API=true"
-  - "RAILS_VERSION=5.1.6 TEST_RAILS_API=true"
-  - "RAILS_VERSION=5.2.2 TEST_RAILS_API=true
+script: "bundle exec rake db:reset test:all"
+
+gemfile:
+  - gemfiles/4.2.gemfile
+  - gemfiles/4.2.api.gemfile
+  - gemfiles/5.0.gemfile
+  - gemfiles/5.1.gemfile
+  - gemfiles/5.2.gemfile
