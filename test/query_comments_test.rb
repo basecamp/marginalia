@@ -283,7 +283,7 @@ class MarginaliaTest < MiniTest::Test
       refute_match %{job:PostsJob}, @queries.last
     end
   end
-  
+
   def test_sidekiq_job
     Marginalia::Comment.components = [:sidekiq_job]
     Marginalia::SidekiqInstrumentation.enable!
@@ -308,6 +308,37 @@ class MarginaliaTest < MiniTest::Test
   def test_bad_comments
     assert_equal Marginalia::Comment.escape_sql_comment('*/; DROP TABLE USERS;/*'), '; DROP TABLE USERS;'
     assert_equal Marginalia::Comment.escape_sql_comment('**//; DROP TABLE USERS;/*'), '; DROP TABLE USERS;'
+  end
+
+  def test_inline_annotations
+    Marginalia.with_annotation("foo") do
+      Post.first
+    end
+    Post.first
+    assert_match %r{/\*foo\*/$}, @queries.first
+    refute_match %r{/\*foo\*/$}, @queries.last
+    # Assert we're not adding an empty comment, either
+    refute_match %r{/\*\s*\*/$}, @queries.last
+  end
+
+  def test_nested_inline_annotations
+    Marginalia.with_annotation("foo") do
+      Marginalia.with_annotation("bar") do
+        Post.first
+      end
+    end
+    assert_match %r{/\*foobar\*/$}, @queries.first
+  end
+
+  def test_bad_inline_annotations
+    Marginalia.with_annotation("*/; DROP TABLE USERS;/*") do
+      Post.first
+    end
+    Marginalia.with_annotation("**//; DROP TABLE USERS;//**") do
+      Post.first
+    end
+    assert_match %r{/\*; DROP TABLE USERS;\*/$}, @queries.first
+    assert_match %r{/\*; DROP TABLE USERS;\*/$}, @queries.last
   end
 
   def teardown

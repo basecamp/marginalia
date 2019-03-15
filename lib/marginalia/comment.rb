@@ -30,6 +30,11 @@ module Marginalia
       ret
     end
 
+    def self.construct_inline_comment
+      return nil if inline_annotations.none?
+      escape_sql_comment(inline_annotations.join)
+    end
+
     def self.escape_sql_comment(str)
       while str.include?('/*') || str.include?('*/')
         str = str.gsub('/*', '').gsub('*/', '')
@@ -157,6 +162,10 @@ module Marginalia
           return if marginalia_adapter.pool.nil?
           marginalia_adapter.pool.spec.config
         end
+      end
+
+      def self.inline_annotations
+        Thread.current[:marginalia_inline_annotations] ||= []
       end
   end
 

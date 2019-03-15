@@ -49,10 +49,13 @@ module Marginalia
       Marginalia::Comment.update_adapter!(self)
       comment = Marginalia::Comment.construct_comment
       if comment.present? && !sql.include?(comment)
-        "#{sql} /*#{comment}*/"
-      else
-        sql
+        sql = "#{sql} /*#{comment}*/"
       end
+      inline_comment = Marginalia::Comment.construct_inline_comment
+      if inline_comment.present?
+        sql = "#{sql} /*#{inline_comment}*/"
+      end
+      sql
     end
 
     def execute_with_marginalia(sql, name = nil)
@@ -100,5 +103,12 @@ module Marginalia
     ensure
       Marginalia::Comment.clear!
     end
+  end
+
+  def self.with_annotation(comment, &block)
+    Marginalia::Comment.inline_annotations.push(comment)
+    block.call if block.present?
+  ensure
+    Marginalia::Comment.inline_annotations.pop
   end
 end

@@ -100,6 +100,27 @@ With ActiveRecord >= 3.2.19:
 
 Pull requests for other included comment components are welcome.
 
+## Inline query annotations
+
+In addition to the request or job-level component-based annotations,
+Marginalia may be used to add inline annotations to specific queries using a
+block-based API.
+
+For example, the following code:
+
+    Marginalia.with_annotation("foo") do
+      Account.where(queenbee_id: 1234567890).first
+    end
+
+will issue this query:
+
+    Account Load (0.3ms)  SELECT `accounts`.* FROM `accounts`
+    WHERE `accounts`.`queenbee_id` = 1234567890
+    LIMIT 1
+    /*application:BCX,controller:project_imports,action:show*/ /*foo*/
+
+Nesting `with_annotation` blocks will concatenate the comment strings.
+
 ## Contributing
 
 Start by bundling and creating the test database:
