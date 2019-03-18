@@ -341,6 +341,13 @@ class MarginaliaTest < MiniTest::Test
     assert_match %r{/\*; DROP TABLE USERS;\*/$}, @queries.last
   end
 
+  def test_inline_annotations_are_deduped
+    Marginalia.with_annotation("foo") do
+      ActiveRecord::Base.connection.execute "select id from posts /*foo*/"
+    end
+    assert_match %r{select id from posts /\*foo\*/ /\*application:rails\*/$}, @queries.first
+  end
+
   def teardown
     Marginalia.application_name = nil
     Marginalia::Comment.lines_to_ignore = nil
