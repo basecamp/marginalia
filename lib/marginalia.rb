@@ -49,12 +49,21 @@ module Marginalia
       Marginalia::Comment.update_adapter!(self)
       comment = Marginalia::Comment.construct_comment
       if comment.present? && !sql.include?(comment)
-        sql = "#{sql} /*#{comment}*/"
+        sql = if Marginalia::Comment.prepend_comment
+          "/*#{comment}*/ #{sql}"
+        else
+          "#{sql} /*#{comment}*/"
+        end
       end
       inline_comment = Marginalia::Comment.construct_inline_comment
       if inline_comment.present? && !sql.include?(inline_comment)
-        sql = "#{sql} /*#{inline_comment}*/"
+        sql = if Marginalia::Comment.prepend_comment
+          "/*#{inline_comment}*/ #{sql}"
+        else
+          "#{sql} /*#{inline_comment}*/"
+        end
       end
+
       sql
     end
 

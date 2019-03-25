@@ -2,7 +2,7 @@ require 'socket'
 
 module Marginalia
   module Comment
-    mattr_accessor :components, :lines_to_ignore
+    mattr_accessor :components, :lines_to_ignore, :prepend_comment
     Marginalia::Comment.components ||= [:application, :controller, :action]
 
     def self.update!(controller = nil)

@@ -56,6 +56,8 @@ Optionally, you can set the application name shown in the log like so in an init
 For Rails 3 applications, the name will default to your Rails application name.
 For Rails 2 applications, "rails" is used as the default application name.
 
+#### Components
+
 You can also configure the components of the comment that will be appended,
 by setting `Marginalia::Comment.components`. By default, this is set to:
 
@@ -100,7 +102,17 @@ With ActiveRecord >= 3.2.19:
 
 Pull requests for other included comment components are welcome.
 
-## Inline query annotations
+#### Prepend comments
+
+By default marginalia appends the comments at the end of the query. Certain databases, such as MySQL will truncate
+the query text. This is the case for slow query logs and the results of querying some InnoDB internal tables where the
+length of the query is more than 1024 bytes.
+
+In order to not lose the marginalia comments from your logs, you can prepend the comments using this option:
+
+    Marginalia::Comment.prepend_comment = true
+
+#### Inline query annotations
 
 In addition to the request or job-level component-based annotations,
 Marginalia may be used to add inline annotations to specific queries using a
