@@ -221,10 +221,14 @@ class MarginaliaTest < MiniTest::Test
     assert_match %r{/\*hostname:#{Socket.gethostname},pid:#{Process.pid}\*/$}, @queries.first
   end
 
+  def test_controller_with_single_level
+    PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*controller:posts}, @queries.first
+  end
+
   def test_controller_with_namespace
-    Marginalia::Comment.components = [:controller_with_namespace]
     API::V1::PostsController.action(:driver_only).call(@env)
-    assert_match %r{/\*controller_with_namespace:API::V1::PostsController}, @queries.first
+    assert_match %r{/\*controller:api::v1::posts}, @queries.first
   end
 
   if adapter_pool_available?
