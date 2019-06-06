@@ -1,10 +1,25 @@
 language: ruby
+dist: xenial
 sudo: false
+
+services:
+  - mysql
+  - postgresql
 
 rvm:
   - 2.2
   - 2.3
   - 2.4
+
+before_install:
+  - | # Downgrade Bundler for older Rails versions:
+    # If Rails is v4.2, downgrade Bundler to <2.0.
+    if [[ $BUNDLE_GEMFILE == "${PWD}/gemfiles/4.2.gemfile" ]] || \
+       [[ $BUNDLE_GEMFILE == "${PWD}/gemfiles/4.2.api.gemfile" ]]; then
+      find /home/travis/.rvm/rubies -wholename '*default/bundler-*.gemspec' -delete
+      gem install bundler --version='~> 1.17'
+      bundle --version
+    fi
 
 script: "bundle exec rake db:reset test:all"
 
