@@ -114,6 +114,14 @@ module Marginalia
     end
   end
 
+  def self.with_comment_settings(settings)
+    prev = settings.keys.map { |key| [key, Marginalia::Comment.send(key)] }
+    settings.each { |key, value| Marginalia::Comment.send(:"#{key}=", value) }
+    yield
+  ensure
+    prev.each { |(key, value)| Marginalia::Comment.send(:"#{key}=", value) }
+  end
+
   def self.with_annotation(comment, &block)
     Marginalia::Comment.inline_annotations.push(comment)
     block.call if block.present?

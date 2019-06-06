@@ -3,6 +3,17 @@ require 'socket'
 module Marginalia
   module Comment
     mattr_accessor :components, :lines_to_ignore, :prepend_comment
+
+
+    # @return [String] String used for separating keys and values.
+    mattr_accessor :key_value_separator
+    self.key_value_separator = ':'
+
+    # @return [false, :single] If `:single`, surrounds values with single quotes
+    #   (') and escapes internal single quotes as \'.
+    mattr_accessor :quote_values
+    self.quote_values = false
+
     Marginalia::Comment.components ||= [:application, :controller, :action]
 
     def self.update!(controller = nil)
@@ -17,12 +28,19 @@ module Marginalia
       self.marginalia_adapter = adapter
     end
 
+    # @param [String] value
+    # @return [String]
+    def self.quote_value(value)
+      quote_values ? "'#{value.gsub("'", "\\\\'")}'" : value
+    end
+
     def self.construct_comment
       ret = ''
       self.components.each do |c|
         component_value = self.send(c)
         if component_value.present?
-          ret << "#{c.to_s}:#{component_value.to_s},"
+          ret << "#{c}#{key_value_separator}"\
+                 "#{quote_value(component_value.to_s)},"
         end
       end
       ret.chop!

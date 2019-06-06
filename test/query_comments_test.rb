@@ -366,6 +366,21 @@ class MarginaliaTest < MiniTest::Test
     Marginalia::Comment.prepend_comment = nil
   end
 
+  def test_comment_key_value_separator
+    Marginalia.with_comment_settings(key_value_separator: '=') do
+      ActiveRecord::Base.connection.execute "select id from posts"
+      assert_equal 'select id from posts /*application=rails*/', @queries.first
+    end
+  end
+
+  def test_comment_quote_values_single
+    Marginalia.application_name = "Joe's app"
+    Marginalia.with_comment_settings(quote_values: :single) do
+      ActiveRecord::Base.connection.execute "select id from posts"
+      assert_equal "select id from posts /*application:'Joe\\'s app'*/", @queries.first
+    end
+  end
+
   def teardown
     Marginalia.application_name = nil
     Marginalia::Comment.lines_to_ignore = nil
