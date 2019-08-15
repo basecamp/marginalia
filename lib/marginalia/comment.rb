@@ -162,9 +162,17 @@ module Marginalia
         end
       end
 
-      def self.connection_config
-        return if marginalia_adapter.pool.nil?
-        marginalia_adapter.pool.spec.config
+      if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('6.1')
+        def self.connection_config
+          return if marginalia_adapter.pool.nil?
+          marginalia_adapter.pool.spec.config
+        end
+      else
+        def self.connection_config
+          # `pool` might be a NullPool which has no db_config
+          return unless marginalia_adapter.pool.respond_to?(:db_config)
+          marginalia_adapter.pool.db_config.configuration_hash
+        end
       end
 
       def self.inline_annotations
