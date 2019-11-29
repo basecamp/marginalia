@@ -1,6 +1,10 @@
 language: ruby
 sudo: false
 
+services:
+  - mysql
+  - postgresql
+
 rvm:
   - 2.2
   - 2.3
