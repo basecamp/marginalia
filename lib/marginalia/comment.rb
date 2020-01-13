@@ -102,7 +102,7 @@ module Marginalia
       end
 
       def self.sidekiq_job
-        marginalia_job["class"] if marginalia_job
+        marginalia_job["class"] if marginalia_job && marginalia_job.respond_to?(:[])
       end
 
       def self.line
