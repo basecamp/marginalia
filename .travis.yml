@@ -1,24 +1,33 @@
 language: ruby
 sudo: false
 
+script: "bundle exec rake db:reset test:all"
+
 services:
   - mysql
   - postgresql
 
 rvm:
-  - 2.2
-  - 2.3
+  - 2.7
+  - 2.6
+  - 2.5
   - 2.4
-
-services:
-  - mysql
-  - postgresql
-
-script: "bundle exec rake db:reset test:all"
+  - ruby-head
 
 gemfile:
-  - gemfiles/4.2.gemfile
-  - gemfiles/4.2.api.gemfile
-  - gemfiles/5.0.gemfile
-  - gemfiles/5.1.gemfile
+  - gemfiles/6.0.gemfile
   - gemfiles/5.2.gemfile
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - rvm: ruby-head
+  include:
+    - rvm: 2.3
+      gemfile: gemfiles/4.2.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/4.2.api.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/5.0.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/5.1.gemfile

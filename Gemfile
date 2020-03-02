@@ -4,22 +4,21 @@ gemspec
 
 version = ENV["RAILS_VERSION"] || "4.2.0"
 
-if "4.2.5" > version
+if version < "4.2.5"
   gem 'mysql2', '~> 0.3.13'
-else
+elsif version < "5.1"
   gem 'mysql2', '>= 0.3.13', '< 0.5'
+else
+  gem 'mysql2'
 end
 gem 'pg', '~> 0.15'
 gem 'sqlite3', '~> 1.3.6'
 
-rails = case version
-when "master"
-  {:github => "rails/rails"}
+if version == "master"
+  gem "rails", github: "rails/rails"
 else
-  "~> #{version}"
+  gem "rails", "~> #{version}"
 end
-
-gem "rails", rails
 
 if ENV["TEST_RAILS_API"] == "true"
   gem "rails-api", "~> 0.2.1"
