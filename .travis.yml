@@ -10,6 +10,10 @@ rvm:
   - 2.3
   - 2.4
 
+services:
+  - mysql
+  - postgresql
+
 script: "bundle exec rake db:reset test:all"
 
 gemfile:
