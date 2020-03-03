@@ -108,7 +108,8 @@ module Marginalia
       end
 
       def self.line
-        Marginalia::Comment.lines_to_ignore ||= /\.rvm|gem|vendor\/|marginalia|rbenv/
+        Marginalia::Comment.lines_to_ignore ||= /\.rvm|gem|vendor\/|marginalia|rbenv|monitor\.rb.*mon_synchronize/
+
         last_line = caller.detect do |line|
           line !~ Marginalia::Comment.lines_to_ignore
         end
