@@ -6,8 +6,6 @@ services:
   - postgresql
 
 rvm:
-  - 2.2
-  - 2.3
   - 2.4
 
 services:
@@ -17,8 +15,6 @@ services:
 script: "bundle exec rake db:reset test:all"
 
 gemfile:
-  - gemfiles/4.2.gemfile
-  - gemfiles/4.2.api.gemfile
   - gemfiles/5.0.gemfile
   - gemfiles/5.1.gemfile
   - gemfiles/5.2.gemfile
