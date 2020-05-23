@@ -283,14 +283,14 @@ class MarginaliaTest < MiniTest::Test
       refute_match %{job:PostsJob}, @queries.last
     end
 
-    def test_active_job_with_sidekiq
-      Marginalia::Comment.components = [:job, :sidekiq_job]
-      PostsJob.perform_later
-      assert_match %{job:PostsJob}, @queries.first
-
-      Post.first
-      refute_match %{job:PostsJob}, @queries.last
-    end
+    # def test_active_job_with_sidekiq
+    #   Marginalia::Comment.components = [:job, :sidekiq_job]
+    #   PostsJob.perform_later
+    #   assert_match %{job:PostsJob}, @queries.first
+    #
+    #   Post.first
+    #   refute_match %{job:PostsJob}, @queries.last
+    # end
   end
 
   def test_sidekiq_job
