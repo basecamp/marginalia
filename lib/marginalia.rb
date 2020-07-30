@@ -46,8 +46,7 @@ module Marginalia
     end
 
     def annotate_sql(sql)
-      Marginalia::Comment.update_adapter!(self)
-      comment = Marginalia::Comment.construct_comment
+      comment = Marginalia::Comment.construct_comment(self)
       if comment.present? && !sql.include?(comment)
         sql = if Marginalia::Comment.prepend_comment
           "/*#{comment}*/ #{sql}"
