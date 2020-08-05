@@ -90,8 +90,8 @@ module Marginalia
       exec_update_without_marginalia(annotate_sql(sql), name, binds)
     end
 
-    def execute_and_clear_with_marginalia(sql, *args, &block)
-      execute_and_clear_without_marginalia(annotate_sql(sql), *args, &block)
+    def execute_and_clear_with_marginalia(sql, *args, **kwargs, &block)
+      execute_and_clear_without_marginalia(annotate_sql(sql), *args, **kwargs, &block)
     end
   end
 
