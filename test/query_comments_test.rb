@@ -216,6 +216,16 @@ class MarginaliaTest < MiniTest::Test
     assert_match %r{/\*line:.*lib/marginalia/comment.rb:[0-9]+}, @queries.first
   end
 
+  def test_default_lines_to_ignore_regex
+    line = "/gems/a_gem/lib/a_gem.rb:1:in `some_method'"
+    call_stack = [line] + caller
+
+    assert_match(
+      call_stack.detect { |line| line !~ Marginalia::Comment::DEFAULT_LINES_TO_IGNORE_REGEX },
+      line
+    )
+  end
+
   def test_hostname_and_pid
     Marginalia::Comment.components = [:hostname, :pid]
     PostsController.action(:driver_only).call(@env)
