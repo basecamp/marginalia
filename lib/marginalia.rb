@@ -90,9 +90,15 @@ module Marginalia
       exec_update_without_marginalia(annotate_sql(sql), name, binds)
     end
 
+if ActiveRecord::VERSION::MAJOR >= 5
     def execute_and_clear_with_marginalia(sql, *args, **kwargs, &block)
       execute_and_clear_without_marginalia(annotate_sql(sql), *args, **kwargs, &block)
     end
+ else
+   def execute_and_clear_with_marginalia(sql, *args, &block)
+     execute_and_clear_without_marginalia(annotate_sql(sql), *args, &block)
+   end
+ end
   end
 
   module ActionControllerInstrumentation
