@@ -1,5 +1,6 @@
 language: ruby
-sudo: false
+dist: bionic
+cache: bundler
 
 services:
   - mysql
@@ -10,9 +11,8 @@ rvm:
   - 2.3
   - 2.4
 
-services:
-  - mysql
-  - postgresql
+matrix:
+  fast_finish: true
 
 script: "bundle exec rake db:reset test:all"
 
