@@ -9,6 +9,9 @@ rvm:
   - 2.2
   - 2.3
   - 2.4
+  - 2.5
+  - 2.6
+  - 2.7
 
 services:
   - mysql
@@ -22,3 +25,10 @@ gemfile:
   - gemfiles/5.0.gemfile
   - gemfiles/5.1.gemfile
   - gemfiles/5.2.gemfile
+
+matrix:
+  exclude:
+    - rvm: 2.7
+      gemfile: gemfiles/4.2.gemfile
+    - rvm: 2.7
+      gemfile: gemfiles/4.2.api.gemfile
