@@ -107,8 +107,10 @@ module Marginalia
         marginalia_job["class"] if marginalia_job && marginalia_job.respond_to?(:[])
       end
 
+      DEFAULT_LINES_TO_IGNORE_REGEX = %r{\.rvm|/ruby/gems/|vendor/|marginalia|rbenv|monitor\.rb.*mon_synchronize}
+
       def self.line
-        Marginalia::Comment.lines_to_ignore ||= /\.rvm|gem|vendor\/|marginalia|rbenv|monitor\.rb.*mon_synchronize/
+        Marginalia::Comment.lines_to_ignore ||= DEFAULT_LINES_TO_IGNORE_REGEX
 
         last_line = caller.detect do |line|
           line !~ Marginalia::Comment.lines_to_ignore
