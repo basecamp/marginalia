@@ -54,9 +54,11 @@ require 'marginalia'
 RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 
 ActiveRecord::Base.establish_connection({
-  :adapter  => ENV["DRIVER"] || "mysql",
+  :adapter  => "postgresql",
   :host     => "localhost",
-  :username => ENV["DB_USERNAME"] || "root",
+  :port     => 25432,
+  :username => "development",
+  :password => "development",
   :database => "marginalia_test"
 })
 
@@ -254,11 +256,11 @@ class MarginaliaTest < MiniTest::Test
     def test_socket
       # setting socket in configuration would break some connections - mock it instead
       pool = ActiveRecord::Base.connection_pool
-      pool.spec.stubs(:config).returns({:socket => "marginalia_socket"})
+      pool.db_config.stubs(:socket).returns("marginalia_socket")
       Marginalia::Comment.components = [:socket]
       API::V1::PostsController.action(:driver_only).call(@env)
       assert_match %r{/\*socket:marginalia_socket}, @queries.first
-      pool.spec.unstub(:config)
+      pool.db_config.unstub(:socket)
     end
   end
 
@@ -376,6 +378,21 @@ class MarginaliaTest < MiniTest::Test
     assert_match %r{/\*application:rails\*/ select id from posts$}, @queries.first
   ensure
     Marginalia::Comment.prepend_comment = nil
+  end
+
+  def test_comment_key_value_separator
+    Marginalia.with_comment_settings(key_value_separator: '=') do
+      ActiveRecord::Base.connection.execute "select id from posts"
+      assert_equal 'select id from posts /*application=rails*/', @queries.first
+    end
+  end
+
+  def test_comment_quote_values_single
+    Marginalia.application_name = "Joe's app"
+    Marginalia.with_comment_settings(quote_values: :single) do
+      ActiveRecord::Base.connection.execute "select id from posts"
+      assert_equal "select id from posts /*application:'Joe\\'s app'*/", @queries.first
+    end
   end
 
   def teardown

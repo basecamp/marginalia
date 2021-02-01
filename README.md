@@ -133,6 +133,12 @@ will issue this query:
 
 Nesting `with_annotation` blocks will concatenate the comment strings.
 
+#### Customizing key-value formatting
+
+To change the default key-value separator (from `,`), set `Marginalia::Comment.key_value_separator`.
+To surround all values with single quotes (`'`) and escape internal quotes as `\'`,
+set `Marginalia::Comment.quote_values = :single`.
+
 ## Contributing
 
 Start by bundling and creating the test database:

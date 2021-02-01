@@ -7,6 +7,16 @@ module Marginalia
     mattr_accessor :components, :lines_to_ignore, :prepend_comment
     Marginalia::Comment.components ||= [:application, :controller, :action]
 
+    # @return [String] String used for separating keys and values.
+    mattr_accessor :key_value_separator
+    self.key_value_separator = ':'
+
+    # @return [false, :single] If `:single`, surrounds values with single quotes
+    #   (') and escapes internal single quotes as \'.
+    mattr_accessor :quote_values
+    self.quote_values = false
+
+
     def self.update!(controller = nil)
       self.marginalia_controller = controller
     end
@@ -19,12 +29,19 @@ module Marginalia
       self.marginalia_adapter = adapter
     end
 
+    # @param [String] value
+    # @return [String]
+    def self.quote_value(value)
+      quote_values ? "'#{value.gsub("'", "\\\\'")}'" : value
+    end
+
     def self.construct_comment
       ret = String.new
       self.components.each do |c|
         component_value = self.send(c)
         if component_value.present?
-          ret << "#{c}:#{component_value},"
+          ret << "#{c}#{key_value_separator}"\
+                 "#{quote_value(component_value.to_s)},"
         end
       end
       ret.chop!
@@ -123,7 +140,7 @@ module Marginalia
           else
             ""
           end
-          if last_line.starts_with? root
+          if last_line.start_with? root
             last_line = last_line[root.length..-1]
           end
           last_line
@@ -146,26 +163,20 @@ module Marginalia
 
       if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('3.2.19')
         def self.socket
-          if self.connection_config.present?
-            self.connection_config[:socket]
-          end
+          self.connection_config&.socket
         end
 
         def self.db_host
-          if self.connection_config.present?
-            self.connection_config[:host]
-          end
+          self.connection_config&.host
         end
 
         def self.database
-          if self.connection_config.present?
-            self.connection_config[:database]
-          end
+          self.connection_config&.database
         end
 
         def self.connection_config
           return if marginalia_adapter.pool.nil?
-          marginalia_adapter.pool.spec.config
+          marginalia_adapter.pool.pool_config.db_config
         end
       end
 
