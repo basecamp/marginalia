@@ -13,8 +13,8 @@ gem 'pg', '~> 0.15'
 gem 'sqlite3', '~> 1.3.6'
 
 rails = case version
-when "master"
-  {:github => "rails/rails"}
+when "main"
+  {:github => "rails/rails", :branch => 'main'}
 else
   "~> #{version}"
 end
