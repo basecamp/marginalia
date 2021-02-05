@@ -381,36 +381,38 @@ class MarginaliaTest < MiniTest::Test
   def test_only_builds_comment_string_once_if_cached
     Marginalia::Comment.cache_comment = true
     String.expects(:new).once.returns("")
-    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    assert_equal "application:rails", Marginalia::Comment.construct_comment
     String.expects(:new).never
-    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    assert_equal "application:rails", Marginalia::Comment.construct_comment
   ensure
+    Marginalia::Comment.clear_comment_cache!
     Marginalia::Comment.cache_comment = false
-    Marginalia::Comment.clear!
     String.unstub(:new)
   end
 
   def test_resets_cache_on_update
     Marginalia::Comment.cache_comment = true
     String.expects(:new).twice.returns("")
-    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    assert_equal "application:rails", Marginalia::Comment.construct_comment
     Marginalia::Comment.update!
-    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    String.expects(:new).once.returns("")
+    assert_equal "application:rails", Marginalia::Comment.construct_comment
   ensure
+    Marginalia::Comment.clear_comment_cache!
     Marginalia::Comment.cache_comment = false
-    Marginalia::Comment.clear!
     String.unstub(:new)
   end
 
   def test_resets_cache_on_clear
     Marginalia::Comment.cache_comment = true
-    String.expects(:new).twice.returns("")
-    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    String.expects(:new).once.returns("")
+    assert_equal "application:rails", Marginalia::Comment.construct_comment
     Marginalia::Comment.clear!
-    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    String.expects(:new).once.returns("")
+    assert_equal "application:rails", Marginalia::Comment.construct_comment
   ensure
+    Marginalia::Comment.clear_comment_cache!
     Marginalia::Comment.cache_comment = false
-    Marginalia::Comment.clear!
     String.unstub(:new)
   end
 

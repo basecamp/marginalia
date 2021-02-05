@@ -9,12 +9,12 @@ module Marginalia
     Marginalia::Comment.cache_comment = false
 
     def self.update!(controller = nil)
-      self.cached_comment = nil if cache_comment
+      self.cached_comment = nil if self.cache_comment
       self.marginalia_controller = controller
     end
 
     def self.update_job!(job)
-      self.cached_comment = nil if cache_comment
+      self.cached_comment = nil if self.cache_comment
       self.marginalia_job = job
     end
 
@@ -23,7 +23,7 @@ module Marginalia
     end
 
     def self.construct_comment
-      return self.cached_comment if cache_comment && !self.cached_comment.nil?
+      return self.cached_comment if self.cache_comment && !self.cached_comment.nil?
       ret = String.new
       self.components.each do |c|
         component_value = self.send(c)
@@ -33,7 +33,7 @@ module Marginalia
       end
       ret.chop!
       ret = self.escape_sql_comment(ret)
-      self.cached_comment = ret if cache_comment
+      self.cached_comment = ret if self.cache_comment
       ret
     end
 
@@ -54,12 +54,12 @@ module Marginalia
     end
 
     def self.clear!
-      self.cached_comment = nil if cache_comment
+      self.cached_comment = nil if self.cache_comment
       self.marginalia_controller = nil
     end
 
     def self.clear_job!
-      self.cached_comment = nil if cache_comment
+      self.cached_comment = nil if self.cache_comment
       self.marginalia_job = nil
     end
 
