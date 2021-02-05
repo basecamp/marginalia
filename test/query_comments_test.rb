@@ -386,6 +386,31 @@ class MarginaliaTest < MiniTest::Test
     assert_equal Marginalia::Comment.construct_comment, "application:rails"
   ensure
     Marginalia::Comment.cache_comment = false
+    Marginalia::Comment.clear!
+    String.unstub(:new)
+  end
+
+  def test_resets_cache_on_update
+    Marginalia::Comment.cache_comment = true
+    String.expects(:new).twice.returns("")
+    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    Marginalia::Comment.update!
+    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+  ensure
+    Marginalia::Comment.cache_comment = false
+    Marginalia::Comment.clear!
+    String.unstub(:new)
+  end
+
+  def test_resets_cache_on_clear
+    Marginalia::Comment.cache_comment = true
+    String.expects(:new).twice.returns("")
+    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    Marginalia::Comment.clear!
+    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+  ensure
+    Marginalia::Comment.cache_comment = false
+    Marginalia::Comment.clear!
     String.unstub(:new)
   end
 
