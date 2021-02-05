@@ -378,6 +378,17 @@ class MarginaliaTest < MiniTest::Test
     Marginalia::Comment.prepend_comment = nil
   end
 
+  def test_only_builds_comment_string_once_if_cached
+    Marginalia::Comment.cache_comment = true
+    String.expects(:new).once.returns("")
+    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+    String.expects(:new).never
+    assert_equal Marginalia::Comment.construct_comment, "application:rails"
+  ensure
+    Marginalia::Comment.cache_comment = false
+    String.unstub(:new)
+  end
+
   def teardown
     Marginalia.application_name = nil
     Marginalia::Comment.lines_to_ignore = nil
