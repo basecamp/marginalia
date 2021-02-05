@@ -9,12 +9,12 @@ module Marginalia
     Marginalia::Comment.cache_comment = false
 
     def self.update!(controller = nil)
-      self.cached_comment = nil if self.cache_comment
+      self.cached_comment = nil
       self.marginalia_controller = controller
     end
 
     def self.update_job!(job)
-      self.cached_comment = nil if self.cache_comment
+      self.cached_comment = nil
       self.marginalia_job = job
     end
 
@@ -54,12 +54,12 @@ module Marginalia
     end
 
     def self.clear!
-      self.cached_comment = nil if self.cache_comment
+      self.cached_comment = nil
       self.marginalia_controller = nil
     end
 
     def self.clear_job!
-      self.cached_comment = nil if self.cache_comment
+      self.cached_comment = nil
       self.marginalia_job = nil
     end
 
