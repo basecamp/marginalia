@@ -49,6 +49,10 @@ module Marginalia
       str
     end
 
+    def self.clear_comment_cache!
+      self.cached_comment = nil
+    end
+
     def self.clear!
       self.cached_comment = nil if cache_comment
       self.marginalia_controller = nil

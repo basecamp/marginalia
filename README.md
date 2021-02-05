@@ -7,21 +7,21 @@ This helps when searching log files for queries, and seeing where slow queries c
 
 For example, once enabled, your logs will look like:
 
-    Account Load (0.3ms)  SELECT `accounts`.* FROM `accounts` 
-    WHERE `accounts`.`queenbee_id` = 1234567890 
-    LIMIT 1 
+    Account Load (0.3ms)  SELECT `accounts`.* FROM `accounts`
+    WHERE `accounts`.`queenbee_id` = 1234567890
+    LIMIT 1
     /*application:BCX,controller:project_imports,action:show*/
 
-You can also use these query comments along with a tool like [pt-query-digest](http://www.percona.com/doc/percona-toolkit/2.1/pt-query-digest.html#query-reviews) 
+You can also use these query comments along with a tool like [pt-query-digest](http://www.percona.com/doc/percona-toolkit/2.1/pt-query-digest.html#query-reviews)
 to automate identification of controllers and actions that are hotspots for slow queries.
 
 This gem was created at 37signals. You can read more about how we use it [on
 our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-rails).
 
-This has been tested and used in production with both the mysql and mysql2 gems, 
+This has been tested and used in production with both the mysql and mysql2 gems,
 tested on Rails 2.3.5 through 4.1.x. It has also been tested for sqlite3 and postgres.
 
-Patches are welcome for other database adapters. 
+Patches are welcome for other database adapters.
 
 ## Installation
 
@@ -40,7 +40,7 @@ Or, if your prefer using `config.gem`, you can use:
 
 Finally, if bundled, you'll need to manually run the initialization step in an
 initializer, e.g.:
-    
+
     # Gemfile
     gem 'marginalia', :require => false
 
@@ -93,7 +93,7 @@ default. In addition, implementation is provided for:
     of the controller.
   * `:job` to include the classname of the ActiveJob being performed.
   * `:hostname` to include ```Socket.gethostname```.
-  * `:pid` to include current process id. 
+  * `:pid` to include current process id.
 
 With ActiveRecord >= 3.2.19:
   * `:db_host` to include the configured database hostname.
@@ -132,6 +132,18 @@ will issue this query:
     /*application:BCX,controller:project_imports,action:show*/ /*foo*/
 
 Nesting `with_annotation` blocks will concatenate the comment strings.
+
+#### Caching
+
+In high-traffic scenarios where many queries are executed within a single request cycle, it can be useful to cache the query comment in order to reduce some memory overhead. When enabled, the first comment generated will be re-used for the duration of the request / job execution.
+
+You can enable this feature as follows:
+
+    Marginalia::Comment.cache_comment = true
+
+If you need to reset the cache at any point during a request, use the following:
+
+    Marginalia::Comment.clear_comment_cache!
 
 ## Contributing
 
