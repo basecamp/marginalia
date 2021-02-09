@@ -67,33 +67,38 @@ module Marginalia
       sql
     end
 
-    def execute_with_marginalia(sql, name = nil)
-      execute_without_marginalia(annotate_sql(sql), name)
+    def execute_with_marginalia(sql, *args)
+      execute_without_marginalia(annotate_sql(sql), *args)
     end
+    ruby2_keywords :execute_with_marginalia if respond_to?(:ruby2_keywords, true)
 
-    def exec_query_with_marginalia(sql, name = 'SQL', binds = [])
-      exec_query_without_marginalia(annotate_sql(sql), name, binds)
+    def exec_query_with_marginalia(sql, *args)
+      exec_query_without_marginalia(annotate_sql(sql), *args)
     end
+    ruby2_keywords :exec_query_with_marginalia if respond_to?(:ruby2_keywords, true)
 
     if ActiveRecord::VERSION::MAJOR >= 5
-      def exec_query_with_marginalia(sql, name = 'SQL', binds = [], **options)
+      def exec_query_with_marginalia(sql, *args, **options)
         options[:prepare] ||= false
-        exec_query_without_marginalia(annotate_sql(sql), name, binds, **options)
+        exec_query_without_marginalia(annotate_sql(sql), *args, **options)
       end
     end
 
-    def exec_delete_with_marginalia(sql, name = 'SQL', binds = [])
-      exec_delete_without_marginalia(annotate_sql(sql), name, binds)
+    def exec_delete_with_marginalia(sql, *args)
+      exec_delete_without_marginalia(annotate_sql(sql), *args)
     end
+    ruby2_keywords :exec_delete_with_marginalia if respond_to?(:ruby2_keywords, true)
 
-    def exec_update_with_marginalia(sql, name = 'SQL', binds = [])
-      exec_update_without_marginalia(annotate_sql(sql), name, binds)
+    def exec_update_with_marginalia(sql, *args)
+      exec_update_without_marginalia(annotate_sql(sql), *args)
     end
+    ruby2_keywords :exec_update_with_marginalia if respond_to?(:ruby2_keywords, true)
 
 if ActiveRecord::VERSION::MAJOR >= 5
-    def execute_and_clear_with_marginalia(sql, *args, **kwargs, &block)
-      execute_and_clear_without_marginalia(annotate_sql(sql), *args, **kwargs, &block)
+    def execute_and_clear_with_marginalia(sql, *args, &block)
+      execute_and_clear_without_marginalia(annotate_sql(sql), *args, &block)
     end
+    ruby2_keywords :execute_and_clear_with_marginalia if respond_to?(:ruby2_keywords, true)
  else
    def execute_and_clear_with_marginalia(sql, *args, &block)
      execute_and_clear_without_marginalia(annotate_sql(sql), *args, &block)
