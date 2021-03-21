@@ -33,3 +33,7 @@ matrix:
       gemfile: gemfiles/4.2.gemfile
     - rvm: 2.7
       gemfile: gemfiles/4.2.api.gemfile
+    - rvm: truffleruby-head
+      gemfile: gemfiles/4.2.gemfile
+    - rvm: truffleruby-head
+      gemfile: gemfiles/4.2.api.gemfile
