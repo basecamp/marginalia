@@ -55,7 +55,7 @@ RAILS_ROOT = File.expand_path(File.dirname(__FILE__))
 
 ActiveRecord::Base.establish_connection({
   :adapter  => ENV["DRIVER"] || "mysql",
-  :host     => "localhost",
+  :host     => ENV["DB_HOST"] || "localhost",
   :username => ENV["DB_USERNAME"] || "root",
   :database => "marginalia_test"
 })
@@ -242,7 +242,7 @@ class MarginaliaTest < MiniTest::Test
     def test_db_host
       Marginalia::Comment.components = [:db_host]
       API::V1::PostsController.action(:driver_only).call(@env)
-      assert_match %r{/\*db_host:localhost}, @queries.first
+      assert_match %r{/\*db_host:#{ENV["DB_HOST"] || "localhost"}}, @queries.first
     end
 
     def test_database
