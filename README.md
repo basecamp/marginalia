@@ -19,7 +19,8 @@ This gem was created at 37signals. You can read more about how we use it [on
 our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-rails).
 
 This has been tested and used in production with the mysql2 and pg gems, and is
-tested on Rails 5.2, and Ruby 2.6 through 2.7. It is also tested for sqlite3.
+tested on Rails 5.2 through 6.0, and Ruby 2.6 through 3.0. It is also tested
+for sqlite3.
 
 Rails version support will follow supported versions in the [Ruby on Rails maintenance policy](https://guides.rubyonrails.org/maintenance_policy.html)
 and Ruby support will follow maintained versions in the [Ruby maintenance policy](https://www.ruby-lang.org/en/downloads/branches/).

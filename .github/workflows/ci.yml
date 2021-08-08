@@ -9,8 +9,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ["2.6", "2.7"]
-        rails-version: ["5.2.0"]
+        ruby-version: ["2.6", "2.7", "3.0"]
+        rails-version: ["5.2.0", "6.0.0"]
+        exclude:
+          # Rails 5.2 does not support Ruby 3.0
+          - {ruby-version: "3.0", rails-version: "5.2.0"}
 
     services:
       mysql:
