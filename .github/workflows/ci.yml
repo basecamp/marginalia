@@ -1,0 +1,49 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: ["2.6", "2.7", "3.0"]
+        rails-version: ["5.2.0", "6.0.0"]
+        exclude:
+          # Rails 5.2 does not support Ruby 3.0
+          - {ruby-version: "3.0", rails-version: "5.2.0"}
+
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306:3306
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+
+    env:
+      RAILS_VERSION: ${{ matrix.rails-version }}
+      MYSQL_HOST: 127.0.0.1
+      PGHOST: 127.0.0.1
+      DB_HOST: 127.0.0.1
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+
+    - name: Run tests
+      run: bundle exec rake db:reset test:all
+
