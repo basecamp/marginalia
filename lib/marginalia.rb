@@ -19,8 +19,8 @@ module Marginalia
         else
           is_mysql2 = defined?(ActiveRecord::ConnectionAdapters::Mysql2Adapter) &&
             ActiveRecord::ConnectionAdapters::Mysql2Adapter == instrumented_class
-          # Dont instrument exec_query on mysql2 and AR 3.2+, as it calls execute internally
-          unless is_mysql2 && ActiveRecord::VERSION::STRING > "3.1"
+          # Dont instrument exec_query on mysql2 as it calls execute internally
+          unless is_mysql2
             if instrumented_class.method_defined?(:exec_query)
               alias_method :exec_query_without_marginalia, :exec_query
               alias_method :exec_query, :exec_query_with_marginalia
@@ -29,9 +29,9 @@ module Marginalia
 
           is_postgres = defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
             ActiveRecord::ConnectionAdapters::PostgreSQLAdapter == instrumented_class
-          # Instrument exec_delete and exec_update on AR 3.2+, since they don't
-          # call execute internally
-          if is_postgres && ActiveRecord::VERSION::STRING > "3.1"
+          # Instrument exec_delete and exec_update since they don't call
+          # execute internally
+          if is_postgres
             if instrumented_class.method_defined?(:exec_delete)
               alias_method :exec_delete_without_marginalia, :exec_delete
               alias_method :exec_delete, :exec_delete_with_marginalia
@@ -72,17 +72,11 @@ module Marginalia
     end
     ruby2_keywords :execute_with_marginalia if respond_to?(:ruby2_keywords, true)
 
-    def exec_query_with_marginalia(sql, *args)
-      exec_query_without_marginalia(annotate_sql(sql), *args)
+    def exec_query_with_marginalia(sql, *args, **options)
+      options[:prepare] ||= false
+      exec_query_without_marginalia(annotate_sql(sql), *args, **options)
     end
     ruby2_keywords :exec_query_with_marginalia if respond_to?(:ruby2_keywords, true)
-
-    if ActiveRecord::VERSION::MAJOR >= 5
-      def exec_query_with_marginalia(sql, *args, **options)
-        options[:prepare] ||= false
-        exec_query_without_marginalia(annotate_sql(sql), *args, **options)
-      end
-    end
 
     def exec_delete_with_marginalia(sql, *args)
       exec_delete_without_marginalia(annotate_sql(sql), *args)
@@ -94,16 +88,10 @@ module Marginalia
     end
     ruby2_keywords :exec_update_with_marginalia if respond_to?(:ruby2_keywords, true)
 
-if ActiveRecord::VERSION::MAJOR >= 5
     def execute_and_clear_with_marginalia(sql, *args, &block)
       execute_and_clear_without_marginalia(annotate_sql(sql), *args, &block)
     end
     ruby2_keywords :execute_and_clear_with_marginalia if respond_to?(:ruby2_keywords, true)
- else
-   def execute_and_clear_with_marginalia(sql, *args, &block)
-     execute_and_clear_without_marginalia(annotate_sql(sql), *args, &block)
-   end
- end
   end
 
   module ActionControllerInstrumentation
