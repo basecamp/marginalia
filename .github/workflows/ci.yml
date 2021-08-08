@@ -9,11 +9,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ["2.2", "2.3", "2.4", "2.5", "2.6", "2.7"]
-        gemfile: ["4.2", "4.2.api", "5.0", "5.1", "5.2"]
-        exclude:
-          - {ruby-version: "2.7", gemfile: "4.2"}
-          - {ruby-version: "2.7", gemfile: "4.2.api"}
+        ruby-version: ["2.6", "2.7"]
+        rails-version: ["5.2.0"]
 
     services:
       mysql:
@@ -31,7 +28,7 @@ jobs:
           - 5432:5432
 
     env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
+      RAILS_VERSION: ${{ matrix.rails-version }}
       MYSQL_HOST: 127.0.0.1
       PGHOST: 127.0.0.1
       DB_HOST: 127.0.0.1
@@ -42,7 +39,6 @@ jobs:
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
-        bundler: 1.17.3 # Rails 4.2 requires bundler < 2
         bundler-cache: true
 
     - name: Run tests

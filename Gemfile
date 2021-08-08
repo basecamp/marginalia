@@ -2,29 +2,9 @@ source "https://rubygems.org"
 
 gemspec
 
-version = ENV["RAILS_VERSION"] || "4.2.0"
-
-if "4.2.5" > version
-  gem 'mysql2', '~> 0.3.13'
+rails_version = ENV["RAILS_VERSION"] || "5.2.0"
+if rails_version == "master"
+  gem "rails", github: "rails/rails"
 else
-  gem 'mysql2', '>= 0.3.13', '< 0.5'
-end
-gem 'pg', '~> 0.15'
-gem 'sqlite3', '~> 1.3.6'
-
-rails = case version
-when "master"
-  {:github => "rails/rails"}
-else
-  "~> #{version}"
-end
-
-gem "rails", rails
-
-if ENV["TEST_RAILS_API"] == "true"
-  gem "rails-api", "~> 0.2.1"
-end
-
-if RUBY_VERSION.start_with?('2.3')
-  gem 'mysql'
+  gem "rails", "~> #{rails_version}"
 end

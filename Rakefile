@@ -7,11 +7,6 @@ namespace :test do
   desc "test all drivers"
   task :all => [:mysql2, :postgresql, :sqlite]
 
-  desc "test mysql driver"
-  task :mysql do
-    sh "DRIVER=mysql bundle exec ruby -Ilib -Itest test/*_test.rb"
-  end
-
   desc "test mysql2 driver"
   task :mysql2 do
     sh "DRIVER=mysql2 bundle exec ruby -Ilib -Itest test/*_test.rb"
