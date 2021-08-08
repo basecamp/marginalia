@@ -1,7 +1,6 @@
 module Marginalia
 
   # Alternative to ActiveJob Instrumentation for Sidekiq.
-  # Apt for Instrumenting Sidekiq with Rails version < 4.2.
   module SidekiqInstrumentation
 
     class Middleware
