@@ -112,8 +112,6 @@ unless Post.table_exists?
   end
 end
 
-Marginalia::Railtie.insert
-
 class MarginaliaTest < MiniTest::Test
   def setup
     @queries = []
