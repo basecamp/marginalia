@@ -123,7 +123,7 @@ module Marginalia
           else
             ""
           end
-          if last_line.starts_with? root
+          if last_line.start_with? root
             last_line = last_line[root.length..-1]
           end
           last_line
