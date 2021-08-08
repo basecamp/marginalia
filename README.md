@@ -18,43 +18,25 @@ to automate identification of controllers and actions that are hotspots for slow
 This gem was created at 37signals. You can read more about how we use it [on
 our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-rails).
 
-This has been tested and used in production with both the mysql and mysql2 gems, 
-tested on Rails 2.3.5 through 4.1.x. It has also been tested for sqlite3 and postgres.
+This has been tested and used in production with the mysql2 and pg gems, and is
+tested on Rails 5.2, and Ruby 2.6 through 2.7. It is also tested for sqlite3.
+
+Rails version support will follow supported versions in the [Ruby on Rails maintenance policy](https://guides.rubyonrails.org/maintenance_policy.html)
+and Ruby support will follow maintained versions in the [Ruby maintenance policy](https://www.ruby-lang.org/en/downloads/branches/).
 
 Patches are welcome for other database adapters. 
 
 ## Installation
 
-### For Rails 3.x and 4.x:
-
     # Gemfile
     gem 'marginalia'
-
-### For Rails 2.x:
-
-If using cached externals, add to your `config/externals.yml` file.
-
-Or, if your prefer using `config.gem`, you can use:
-
-    config.gem 'marginalia'
-
-Finally, if bundled, you'll need to manually run the initialization step in an
-initializer, e.g.:
-    
-    # Gemfile
-    gem 'marginalia', :require => false
-
-    #config/initializers/marginalia.rb
-    require 'marginalia'
-    Marginalia::Railtie.insert
 
 ### Customization
 Optionally, you can set the application name shown in the log like so in an initializer (e.g. `config/initializers/marginalia.rb`):
 
     Marginalia.application_name = "BCX"
 
-For Rails 3 applications, the name will default to your Rails application name.
-For Rails 2 applications, "rails" is used as the default application name.
+The name will default to your Rails application name.
 
 #### Components
 
