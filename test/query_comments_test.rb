@@ -101,6 +101,9 @@ Marginalia::Railtie.insert
 
 class MarginaliaTest < MiniTest::Test
   def setup
+    # Touch the model to avoid spurious schema queries
+    Post.first
+
     @queries = []
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
       @queries << args.last[:sql]
