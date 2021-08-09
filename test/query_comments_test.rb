@@ -5,34 +5,17 @@ def using_rails_api?
   ENV["TEST_RAILS_API"] == true
 end
 
-def request_id_available?
-  Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('3.2')
-end
-
-def active_job_available?
-  Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('4.2')
-end
-
-def adapter_pool_available?
-  Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('3.2.19')
-end
-
 require "minitest/autorun"
 require "mocha/minitest"
 require 'logger'
 require 'pp'
 require 'active_record'
 require 'action_controller'
+require 'active_job'
 require 'sidekiq'
 require 'sidekiq/testing'
 
-if request_id_available?
-  require 'action_dispatch/middleware/request_id'
-end
-
-if active_job_available?
-  require 'active_job'
-end
+require 'action_dispatch/middleware/request_id'
 
 if using_rails_api?
   require 'rails-api/action_controller/api'
@@ -81,11 +64,9 @@ module API
   end
 end
 
-if active_job_available?
-  class PostsJob < ActiveJob::Base
-    def perform
-      Post.first
-    end
+class PostsJob < ActiveJob::Base
+  def perform
+    Post.first
   end
 end
 
@@ -132,7 +113,6 @@ class MarginaliaTest < MiniTest::Test
   end
 
   def test_exists
-    skip if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('3.2')
     Post.exists?
     assert_match %r{/\*application:rails\*/$}, @queries.last
   end
@@ -238,70 +218,56 @@ class MarginaliaTest < MiniTest::Test
     assert_match %r{/\*controller_with_namespace:API::V1::PostsController}, @queries.first
   end
 
-  if adapter_pool_available?
-    def test_db_host
-      Marginalia::Comment.components = [:db_host]
-      API::V1::PostsController.action(:driver_only).call(@env)
-      assert_match %r{/\*db_host:#{ENV["DB_HOST"] || "localhost"}}, @queries.first
-    end
+  def test_db_host
+    Marginalia::Comment.components = [:db_host]
+    API::V1::PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*db_host:#{ENV["DB_HOST"] || "localhost"}}, @queries.first
+  end
 
-    def test_database
-      Marginalia::Comment.components = [:database]
-      API::V1::PostsController.action(:driver_only).call(@env)
-      assert_match %r{/\*database:marginalia_test}, @queries.first
-    end
+  def test_database
+    Marginalia::Comment.components = [:database]
+    API::V1::PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*database:marginalia_test}, @queries.first
+  end
 
-    def test_socket
-      # setting socket in configuration would break some connections - mock it instead
-      pool = ActiveRecord::Base.connection_pool
-      pool.spec.stubs(:config).returns({:socket => "marginalia_socket"})
-      Marginalia::Comment.components = [:socket]
-      API::V1::PostsController.action(:driver_only).call(@env)
-      assert_match %r{/\*socket:marginalia_socket}, @queries.first
-      pool.spec.unstub(:config)
+  def test_socket
+    # setting socket in configuration would break some connections - mock it instead
+    pool = ActiveRecord::Base.connection_pool
+    pool.spec.stubs(:config).returns({:socket => "marginalia_socket"})
+    Marginalia::Comment.components = [:socket]
+    API::V1::PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*socket:marginalia_socket}, @queries.first
+    pool.spec.unstub(:config)
+  end
+
+  def test_request_id
+    @env["action_dispatch.request_id"] = "some-uuid"
+    Marginalia::Comment.components = [:request_id]
+    PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*request_id:some-uuid.*}, @queries.first
+
+    if using_rails_api?
+      PostsApiController.action(:driver_only).call(@env)
+      assert_match %r{/\*request_id:some-uuid.*}, @queries.second
     end
   end
 
-  if request_id_available?
-    def test_request_id
-      @env["action_dispatch.request_id"] = "some-uuid"
-      Marginalia::Comment.components = [:request_id]
-      PostsController.action(:driver_only).call(@env)
-      assert_match %r{/\*request_id:some-uuid.*}, @queries.first
+  def test_active_job
+    Marginalia::Comment.components = [:job]
+    PostsJob.perform_later
+    assert_match %{job:PostsJob}, @queries.first
 
-      if using_rails_api?
-        PostsApiController.action(:driver_only).call(@env)
-        assert_match %r{/\*request_id:some-uuid.*}, @queries.second
-      end
-    end
-
-  else
-    def test_request_id_is_noop_on_old_rails
-      @env["action_dispatch.request_id"] = "some-uuid"
-      Marginalia::Comment.components = [:request_id]
-      PostsController.action(:driver_only).call(@env)
-      assert_match %r{^select id from posts$}, @queries.first
-    end
+    Post.first
+    refute_match %{job:PostsJob}, @queries.last
   end
 
-  if active_job_available?
-    def test_active_job
-      Marginalia::Comment.components = [:job]
-      PostsJob.perform_later
-      assert_match %{job:PostsJob}, @queries.first
+  def test_active_job_with_sidekiq
+    Marginalia::Comment.components = [:job, :sidekiq_job]
+    PostsJob.perform_later
+    assert_match %{job:PostsJob}, @queries.first
 
-      Post.first
-      refute_match %{job:PostsJob}, @queries.last
-    end
-
-    def test_active_job_with_sidekiq
-      Marginalia::Comment.components = [:job, :sidekiq_job]
-      PostsJob.perform_later
-      assert_match %{job:PostsJob}, @queries.first
-
-      Post.first
-      refute_match %{job:PostsJob}, @queries.last
-    end
+    Post.first
+    refute_match %{job:PostsJob}, @queries.last
   end
 
   def test_sidekiq_job
