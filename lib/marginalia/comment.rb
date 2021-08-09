@@ -3,26 +3,37 @@
 require 'socket'
 
 module Marginalia
+  class ThreadState
+    attr_accessor :controller, :job
+    attr_writer :inline_annotations
+
+    def inline_annotations
+      @inline_annotations ||= []
+    end
+  end
+
   module Comment
     mattr_accessor :components, :lines_to_ignore, :prepend_comment
     Marginalia::Comment.components ||= [:application, :controller, :action]
 
+    ADAPTER_COMPONENTS = [:socket, :db_host, :database]
+
     def self.update!(controller = nil)
-      self.marginalia_controller = controller
+      self.state.controller = controller
     end
 
     def self.update_job!(job)
-      self.marginalia_job = job
+      self.state.job = job
     end
 
-    def self.update_adapter!(adapter)
-      self.marginalia_adapter = adapter
-    end
-
-    def self.construct_comment
+    def self.construct_comment(adapter)
       ret = String.new
       self.components.each do |c|
-        component_value = self.send(c)
+        component_value = if ADAPTER_COMPONENTS.include?(c)
+          self.send(c, adapter)
+        else
+          self.send(c)
+        end
         if component_value.present?
           ret << "#{c}:#{component_value},"
         end
@@ -54,27 +65,19 @@ module Marginalia
 
     private
       def self.marginalia_controller=(controller)
-        Thread.current[:marginalia_controller] = controller
+        state.controller = controller
       end
 
       def self.marginalia_controller
-        Thread.current[:marginalia_controller]
+        state.controller
       end
 
       def self.marginalia_job=(job)
-        Thread.current[:marginalia_job] = job
+        state.job = job
       end
 
       def self.marginalia_job
-        Thread.current[:marginalia_job]
-      end
-
-      def self.marginalia_adapter=(adapter)
-        Thread.current[:marginalia_adapter] = adapter
-      end
-
-      def self.marginalia_adapter
-        Thread.current[:marginalia_adapter]
+        state.job
       end
 
       def self.application
@@ -145,32 +148,30 @@ module Marginalia
       end
 
       if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('3.2.19')
-        def self.socket
-          if self.connection_config.present?
-            self.connection_config[:socket]
-          end
+        def self.socket(adapter)
+          connection_config(adapter)[:socket]
         end
 
-        def self.db_host
-          if self.connection_config.present?
-            self.connection_config[:host]
-          end
+        def self.db_host(adapter)
+          connection_config(adapter)[:host]
         end
 
-        def self.database
-          if self.connection_config.present?
-            self.connection_config[:database]
-          end
+        def self.database(adapter)
+          connection_config(adapter)[:database]
         end
 
-        def self.connection_config
-          return if marginalia_adapter.pool.nil?
-          marginalia_adapter.pool.spec.config
+        def self.connection_config(adapter)
+          return {} if adapter.pool.nil?
+          adapter.pool.spec.config
         end
       end
 
+      def self.state
+        Thread.current[:marginalia] ||= ThreadState.new
+      end
+
       def self.inline_annotations
-        Thread.current[:marginalia_inline_annotations] ||= []
+        state.inline_annotations
       end
   end
 
