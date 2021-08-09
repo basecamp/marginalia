@@ -116,6 +116,14 @@ will issue this query:
 
 Nesting `with_annotation` blocks will concatenate the comment strings.
 
+### Prepared statements
+
+Be careful when using Marginalia with prepared statements. If you use a component
+like `request_id` then every query will be unique and so ActiveRecord will create
+a new prepared statement for each potentially exhausting system resources.
+[Disable prepared statements](https://guides.rubyonrails.org/configuring.html#configuring-a-postgresql-database)
+if you wish to use components with high cardinality values.
+
 ## Contributing
 
 Start by bundling and creating the test database:
