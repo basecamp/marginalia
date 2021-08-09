@@ -116,7 +116,9 @@ will issue this query:
 
 Nesting `with_annotation` blocks will concatenate the comment strings.
 
-### Prepared statements
+### Caveats
+
+#### Prepared statements
 
 Be careful when using Marginalia with prepared statements. If you use a component
 like `request_id` then every query will be unique and so ActiveRecord will create
