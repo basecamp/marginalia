@@ -5,6 +5,10 @@ def using_rails_api?
   ENV["TEST_RAILS_API"] == true
 end
 
+def pool_db_config?
+  Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('6.1')
+end
+
 require "minitest/autorun"
 require "mocha/minitest"
 require 'logger'
@@ -97,6 +101,9 @@ Marginalia::Railtie.insert
 
 class MarginaliaTest < MiniTest::Test
   def setup
+    # Touch the model to avoid spurious schema queries
+    Post.first
+
     @queries = []
     ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
       @queries << args.last[:sql]
@@ -230,14 +237,26 @@ class MarginaliaTest < MiniTest::Test
     assert_match %r{/\*database:marginalia_test}, @queries.first
   end
 
-  def test_socket
-    # setting socket in configuration would break some connections - mock it instead
-    pool = ActiveRecord::Base.connection_pool
-    pool.spec.stubs(:config).returns({:socket => "marginalia_socket"})
-    Marginalia::Comment.components = [:socket]
-    API::V1::PostsController.action(:driver_only).call(@env)
-    assert_match %r{/\*socket:marginalia_socket}, @queries.first
-    pool.spec.unstub(:config)
+  if pool_db_config?
+    def test_socket
+      # setting socket in configuration would break some connections - mock it instead
+      pool = ActiveRecord::Base.connection_pool
+      pool.db_config.stubs(:configuration_hash).returns({:socket => "marginalia_socket"})
+      Marginalia::Comment.components = [:socket]
+      API::V1::PostsController.action(:driver_only).call(@env)
+      assert_match %r{/\*socket:marginalia_socket}, @queries.first
+      pool.db_config.unstub(:configuration_hash)
+    end
+  else
+    def test_socket
+      # setting socket in configuration would break some connections - mock it instead
+      pool = ActiveRecord::Base.connection_pool
+      pool.spec.stubs(:config).returns({:socket => "marginalia_socket"})
+      Marginalia::Comment.components = [:socket]
+      API::V1::PostsController.action(:driver_only).call(@env)
+      assert_match %r{/\*socket:marginalia_socket}, @queries.first
+      pool.spec.unstub(:config)
+    end
   end
 
   def test_request_id
