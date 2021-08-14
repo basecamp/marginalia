@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test}/*`.split("\n")
   gem.name          = "marginalia"
   gem.require_paths = ["lib"]
-  gem.version       = "1.10.1"
+  gem.version       = "1.11.0"
   gem.license       = "MIT"
 
   gem.add_runtime_dependency "actionpack", ">= 5.2"
