@@ -76,7 +76,6 @@ module Marginalia
       options[:prepare] ||= false
       exec_query_without_marginalia(annotate_sql(sql), *args, **options)
     end
-    ruby2_keywords :exec_query_with_marginalia if respond_to?(:ruby2_keywords, true)
 
     def exec_delete_with_marginalia(sql, *args)
       exec_delete_without_marginalia(annotate_sql(sql), *args)
