@@ -9,6 +9,10 @@ def pool_db_config?
   Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('6.1')
 end
 
+def database_role_available?
+  Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('6.0.0')
+end
+
 require "minitest/autorun"
 require "mocha/minitest"
 require 'logger'
@@ -256,6 +260,14 @@ class MarginaliaTest < MiniTest::Test
       API::V1::PostsController.action(:driver_only).call(@env)
       assert_match %r{/\*socket:marginalia_socket}, @queries.first
       pool.spec.unstub(:config)
+    end
+  end
+
+  if database_role_available?
+    def test_db_role
+      Marginalia::Comment.components = [:db_role]
+      API::V1::PostsController.action(:driver_only).call(@env)
+      assert_match %r{/\*db_role:writing}, @queries.first
     end
   end
 

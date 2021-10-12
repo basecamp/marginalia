@@ -162,6 +162,11 @@ module Marginalia
         end
       end
 
+      def self.db_role
+        return if marginalia_adapter.pool.nil?
+        ActiveRecord::Base.current_role
+      end
+
       if Gem::Version.new(ActiveRecord::VERSION::STRING) < Gem::Version.new('6.1')
         def self.connection_config
           return if marginalia_adapter.pool.nil?
