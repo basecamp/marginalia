@@ -124,6 +124,12 @@ a new prepared statement for each potentially exhausting system resources.
 [Disable prepared statements](https://guides.rubyonrails.org/configuring.html#configuring-a-postgresql-database)
 if you wish to use components with high cardinality values.
 
+#### Customizing key-value formatting
+
+To change the default key-value separator (from `,`), set `Marginalia::Comment.key_value_separator`.
+To surround all values with single quotes (`'`) and escape internal quotes as `\'`,
+set `Marginalia::Comment.quote_values = :single`.
+
 ## Contributing
 
 Start by bundling and creating the test database:
