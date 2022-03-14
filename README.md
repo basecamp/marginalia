@@ -126,7 +126,7 @@ if you wish to use components with high cardinality values.
 
 #### Customizing key-value formatting
 
-To change the default key-value separator (from `,`), set `Marginalia::Comment.key_value_separator`.
+To change the default key-value separator (from `:`), set `Marginalia::Comment.key_value_separator`.
 To surround all values with single quotes (`'`) and escape internal quotes as `\'`,
 set `Marginalia::Comment.quote_values = :single`.
 
