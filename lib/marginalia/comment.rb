@@ -1,22 +1,15 @@
 # frozen_string_literal: true
 
 require 'socket'
+require 'marginalia/formatter'
 
 module Marginalia
   module Comment
-    mattr_accessor :components, :lines_to_ignore, :prepend_comment
-
-
-    # @return [String] String used for separating keys and values.
-    mattr_accessor :key_value_separator
-    self.key_value_separator = ':'
-
-    # @return [false, :single] If `:single`, surrounds values with single quotes
-    #   (') and escapes internal single quotes as \'.
-    mattr_accessor :quote_values
-    self.quote_values = false
+    mattr_accessor :components, :lines_to_ignore, :prepend_comment, :formatter
 
     Marginalia::Comment.components ||= [:application, :controller, :action]
+
+    Marginalia::Comment.formatter ||= Marginalia::FormatterFactory.from_symbol(:default)
 
     def self.update!(controller = nil)
       self.marginalia_controller = controller
@@ -30,10 +23,8 @@ module Marginalia
       self.marginalia_adapter = adapter
     end
 
-    # @param [String] value
-    # @return [String]
-    def self.quote_value(value)
-      quote_values ? "'#{value.gsub("'", "\\\\'")}'" : value
+    def self.update_formatter!(formatter = :default)
+      self.formatter = Marginalia::FormatterFactory.from_symbol(formatter)
     end
 
     def self.construct_comment
@@ -41,8 +32,8 @@ module Marginalia
       self.components.each do |c|
         component_value = self.send(c)
         if component_value.present?
-          ret << "#{c}#{key_value_separator}"\
-                 "#{quote_value(component_value)},"
+          ret << "#{c}#{self.formatter.key_value_separator}"\
+                 "#{self.formatter.quote_value(component_value)},"
         end
       end
       ret.chop!

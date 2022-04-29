@@ -363,19 +363,21 @@ class MarginaliaTest < MiniTest::Test
     Marginalia::Comment.prepend_comment = nil
   end
 
-  def test_comment_key_value_separator
-    Marginalia.with_comment_settings(key_value_separator: '=') do
-      ActiveRecord::Base.connection.execute "select id from posts"
-      assert_equal 'select id from posts /*application=rails*/', @queries.first
-    end
+  def test_sqlcommenter_formatting
+    Marginalia::Comment.update_formatter!(:sqlcommenter)
+    ActiveRecord::Base.connection.execute "select id from posts"
+    assert_equal "select id from posts /*application='rails'*/", @queries.first
+  ensure
+    Marginalia::Comment.update_formatter!(:default)
   end
 
-  def test_comment_quote_values_single
+  def test_sqlcommenter_formatting_quotes
     Marginalia.application_name = "Joe's app"
-    Marginalia.with_comment_settings(quote_values: :single) do
-      ActiveRecord::Base.connection.execute "select id from posts"
-      assert_equal "select id from posts /*application:'Joe\\'s app'*/", @queries.first
-    end
+    Marginalia::Comment.update_formatter!(:sqlcommenter)
+    ActiveRecord::Base.connection.execute "select id from posts"
+    assert_equal "select id from posts /*application='Joe\\'s app'*/", @queries.first
+  ensure
+    Marginalia::Comment.update_formatter!(:default)
   end
 
   def teardown
