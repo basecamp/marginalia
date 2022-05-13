@@ -95,17 +95,17 @@ In order to not lose the marginalia comments from your logs, you can prepend the
 
 #### Comment formatting
 
-Comment formatting can be configured to be more machine-readable by adding this command: `Marginalia::Comment.update_formatter!(:sqlcommenter)`. This will format Marginalia comments to be consistent with other SQL commenting projects, like [Google's sqlcommenter](https://google.github.io/sqlcommenter/).
+Comment formatting can be configured to be more machine-readable by adding this command: `Marginalia::Comment.update_formatter!(:sqlcommenter)`. This will format Marginalia comments to be consistent with other SQL commenting projects, like [Google's sqlcommenter](https://google.github.io/sqlcommenter/). To revert back to the default formatter, run `Marginalia::Comment.update_formatter!(:default)`.
 
-This format makes the following changes:
+The `:sqlcommenter` formatter makes the following changes:
 1. The key-value separator will use an equals sign (`=`) instead of a colon (`:`).
 2. Values will be surrounded with single quotes (`'`) and escape internal quotes as `\'`.
 
-For example, a SQL query like this:
+For example, a default formatted SQL query that looks like this:
 `"select id from posts /*application:Joe's app,controller:my_controller*/"`
 
-will be formatted like this:
-`"select id from posts /*application='Joe\\'s app',controller='my_controller*/"`
+will be formatted like this using `:sqlcommenter`:
+`"select id from posts /*application='Joe\\'s app',controller='my_controller'*/"`
 
 #### Inline query annotations
 
