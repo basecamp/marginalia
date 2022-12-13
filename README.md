@@ -20,7 +20,7 @@ our blog](http://37signals.com/svn/posts/3130-tech-note-mysql-query-comments-in-
 
 This has been tested and used in production with the mysql2 and pg gems, and is
 tested on Rails 5.2 through 6.1, and Ruby 2.6 through 3.0. It is also tested
-for sqlite3. **As of Rails 7, Marginalia is a part of Rails itself and does not need to be separately included. See rails/rails#42240.**
+for sqlite3. **As of Rails 7, Marginalia is a part of Rails itself and does not need to be separately included. See https://api.rubyonrails.org/classes/ActiveRecord/QueryLogs.html for details.**
 
 Rails version support will follow supported versions in the [Ruby on Rails maintenance policy](https://guides.rubyonrails.org/maintenance_policy.html)
 and Ruby support will follow maintained versions in the [Ruby maintenance policy](https://www.ruby-lang.org/en/downloads/branches/).
