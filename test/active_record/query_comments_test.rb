@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 require "minitest/autorun"
+gem 'mocha'
+require 'test/unit'
 require 'mocha/test_unit'
 require 'logger'
 require 'pp'
