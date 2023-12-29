@@ -112,9 +112,10 @@ module Marginalia
       def self.line
         Marginalia::Comment.lines_to_ignore ||= DEFAULT_LINES_TO_IGNORE_REGEX
 
-        last_line = caller.detect do |line|
-          line !~ Marginalia::Comment.lines_to_ignore
+        last_line = caller_locations.find do |loc|
+          loc.path !~ Marginalia::Comment.lines_to_ignore
         end
+
         if last_line
           root = if defined?(Rails) && Rails.respond_to?(:root)
             Rails.root.to_s
@@ -123,11 +124,15 @@ module Marginalia
           else
             ""
           end
-          if last_line.start_with? root
-            last_line = last_line[root.length..-1]
+
+          if last_line.path.starts_with? root
+            last_line = "#{last_line.path[root.length..]}:#{last_line.lineno}"
+          else
+            last_line = "#{last_line.path}:#{last_line.lineno}"
           end
-          last_line
         end
+
+        last_line
       end
 
       def self.hostname
