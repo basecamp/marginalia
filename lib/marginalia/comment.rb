@@ -112,10 +112,12 @@ module Marginalia
       def self.line
         Marginalia::Comment.lines_to_ignore ||= DEFAULT_LINES_TO_IGNORE_REGEX
 
-        last_line = caller.detect do |line|
-          line !~ Marginalia::Comment.lines_to_ignore
+        last_line = caller_locations.detect do |loc|
+          !loc.path.match?(Marginalia::Comment.lines_to_ignore)
         end
         if last_line
+          last_line = last_line.to_s
+
           root = if defined?(Rails) && Rails.respond_to?(:root)
             Rails.root.to_s
           elsif defined?(RAILS_ROOT)
