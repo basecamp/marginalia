@@ -25,8 +25,8 @@ if using_rails_api?
   require 'rails-api/action_controller/api'
 end
 
-# Shim for compatibility with older versions of MiniTest
-MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
+# Shim for compatibility with older versions of Minitest
+Minitest::Test = Minitest::Unit::TestCase unless defined?(Minitest::Test)
 
 # From version 4.1, ActiveRecord expects `Rails.env` to be
 # defined if `Rails` is defined
@@ -99,7 +99,7 @@ end
 
 Marginalia::Railtie.insert
 
-class MarginaliaTest < MiniTest::Test
+class MarginaliaTest < Minitest::Test
   def setup
     # Touch the model to avoid spurious schema queries
     Post.first
