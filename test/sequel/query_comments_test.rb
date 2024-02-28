@@ -1,11 +1,11 @@
 require "minitest/autorun"
-require 'mocha/test_unit'
 require 'logger'
 require 'sequel'
 require 'marginalia'
 require 'test_helpers'
 require "tempfile"
-
+require 'test/unit'
+require 'mocha/test_unit'
 # Shim for compatibility with older versions of MiniTest
 MiniTest::Test = MiniTest::Unit::TestCase unless defined?(MiniTest::Test)
 

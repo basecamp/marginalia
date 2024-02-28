@@ -1,22 +1,27 @@
 sudo: required
 language: ruby
+dist: bionic
 
 rvm:
-  - 2.5.0
+  - 3.2.2
 
 addons:
-  postgresql: "9.6"
+  postgresql: "11"
+  apt:
+    packages:
+    - postgresql-11
+    - postgresql-client-11
 
 services:
   - postgresql
 
 env:
-  - MARGINALIA_DB_PORT=5432 MARGINALIA_LOG_FILE=/var/log/postgresql/postgresql-9.6-main.log
+  - MARGINALIA_DB_PORT=5432 MARGINALIA_LOG_FILE=/var/log/postgresql/postgresql-11-main.log
 
 sudo: false
 
 before_install:
-  - bash -c "yes | gem uninstall -i /home/travis/.rvm/gems/ruby-2.5.0@global rake"
+  - bash -c "yes | gem uninstall -i /home/travis/.rvm/gems/ruby-3.2.0@global rake"
 
 before_script:
   - sudo chmod 0644 $MARGINALIA_LOG_FILE

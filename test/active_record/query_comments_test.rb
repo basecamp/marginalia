@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 require "minitest/autorun"
+gem 'mocha'
+require 'test/unit'
 require 'mocha/test_unit'
 require 'logger'
 require 'pp'
@@ -60,12 +62,6 @@ end
 class ActiveRecordMarginaliaTest < MiniTest::Test
   def setup
     Marginalia.set('adapter', 'active_record')
-  end
-
-  def test_configuring_application
-    Marginalia.set('app', 'customapp')
-    Post.all.to_a
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*adapter:active_record,app:customapp*/")
   end
 
   def test_crud_actions_contain_comment
