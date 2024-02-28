@@ -16,7 +16,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "activerecord", ">= 7"
   gem.add_development_dependency "sequel"
   gem.add_development_dependency "rake"
-  gem.add_development_dependency "minitest"
+  gem.add_development_dependency "minitest", "<= 5.18.1"
   gem.add_development_dependency "mocha"
 
   gem.summary = gem.description = %q{Attach comments to your ActiveRecord/Sequel queries.}

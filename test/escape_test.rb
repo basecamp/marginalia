@@ -1,4 +1,5 @@
 require "minitest/autorun"
+require 'test/unit'
 require 'mocha/test_unit'
 
 require 'marginalia'

@@ -1,11 +1,16 @@
 sudo: required
 language: ruby
+dist: bionic
 
 rvm:
   - 3.2.2
 
 addons:
   postgresql: "11"
+  apt:
+    packages:
+    - postgresql-11
+    - postgresql-client-11
 
 services:
   - postgresql

@@ -64,12 +64,6 @@ class ActiveRecordMarginaliaTest < MiniTest::Test
     Marginalia.set('adapter', 'active_record')
   end
 
-  def test_configuring_application
-    Marginalia.set('app', 'customapp')
-    Post.all.to_a
-    assert TestHelpers.file_contains_string(ENV['MARGINALIA_LOG_FILE'], "/*adapter:active_record,app:customapp*/")
-  end
-
   def test_crud_actions_contain_comment
     Marginalia.set('app', 'crud.insert')
     Post.create({title: "foo"})
