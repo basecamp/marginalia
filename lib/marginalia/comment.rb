@@ -112,8 +112,12 @@ module Marginalia
       def self.line
         Marginalia::Comment.lines_to_ignore ||= DEFAULT_LINES_TO_IGNORE_REGEX
 
-        last_line = caller_locations.detect do |loc|
-          !loc.path.match?(Marginalia::Comment.lines_to_ignore)
+        last_line = nil
+        Thread.each_caller_location do |loc|
+          if !loc.path.match?(Marginalia::Comment.lines_to_ignore)
+            last_line = loc
+            break
+          end
         end
         if last_line
           last_line = last_line.to_s
