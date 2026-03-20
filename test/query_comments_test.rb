@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'rails/version'
 
-def using_rails_api?
-  ENV["TEST_RAILS_API"] == true
-end
-
-def pool_db_config?
-  Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new('6.1')
-end
-
 require "minitest/autorun"
 require "mocha/minitest"
 require 'logger'
@@ -20,13 +12,6 @@ require 'sidekiq'
 require 'sidekiq/testing'
 
 require 'action_dispatch/middleware/request_id'
-
-if using_rails_api?
-  require 'rails-api/action_controller/api'
-end
-
-# Shim for compatibility with older versions of Minitest
-Minitest::Test = Minitest::Unit::TestCase unless defined?(Minitest::Test)
 
 # From version 4.1, ActiveRecord expects `Rails.env` to be
 # defined if `Rails` is defined
@@ -53,11 +38,7 @@ end
 class PostsController < ActionController::Base
   def driver_only
     ActiveRecord::Base.connection.execute "select id from posts"
-    if Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new('5')
-      render body: nil
-    else
-      render nothing: true
-    end
+    render body: nil
   end
 end
 
@@ -78,15 +59,6 @@ class PostsSidekiqJob
   include Sidekiq::Worker
   def perform
     Post.first
-  end
-end
-
-if using_rails_api?
-  class PostsApiController < ActionController::API
-    def driver_only
-      ActiveRecord::Base.connection.execute "select id from posts"
-      head :no_content
-    end
   end
 end
 
@@ -155,33 +127,18 @@ class MarginaliaTest < Minitest::Test
   def test_query_commenting_on_mysql_driver_with_action
     PostsController.action(:driver_only).call(@env)
     assert_match %r{select id from posts /\*application:rails,controller:posts,action:driver_only\*/$}, @queries.first
-
-    if using_rails_api?
-      PostsApiController.action(:driver_only).call(@env)
-      assert_match %r{select id from posts /\*application:rails,controller:posts_api,action:driver_only\*/$}, @queries.second
-    end
   end
 
   def test_configuring_application
     Marginalia.application_name = "customapp"
     PostsController.action(:driver_only).call(@env)
     assert_match %r{/\*application:customapp,controller:posts,action:driver_only\*/$}, @queries.first
-
-    if using_rails_api?
-      PostsApiController.action(:driver_only).call(@env)
-      assert_match %r{/\*application:customapp,controller:posts_api,action:driver_only\*/$}, @queries.second
-    end
   end
 
   def test_configuring_query_components
     Marginalia::Comment.components = [:controller]
     PostsController.action(:driver_only).call(@env)
     assert_match %r{/\*controller:posts\*/$}, @queries.first
-
-    if using_rails_api?
-      PostsApiController.action(:driver_only).call(@env)
-      assert_match %r{/\*controller:posts_api\*/$}, @queries.second
-    end
   end
 
   def test_last_line_component
@@ -237,26 +194,14 @@ class MarginaliaTest < Minitest::Test
     assert_match %r{/\*database:marginalia_test}, @queries.first
   end
 
-  if pool_db_config?
-    def test_socket
-      # setting socket in configuration would break some connections - mock it instead
-      pool = ActiveRecord::Base.connection_pool
-      pool.db_config.stubs(:configuration_hash).returns({:socket => "marginalia_socket"})
-      Marginalia::Comment.components = [:socket]
-      API::V1::PostsController.action(:driver_only).call(@env)
-      assert_match %r{/\*socket:marginalia_socket}, @queries.first
-      pool.db_config.unstub(:configuration_hash)
-    end
-  else
-    def test_socket
-      # setting socket in configuration would break some connections - mock it instead
-      pool = ActiveRecord::Base.connection_pool
-      pool.spec.stubs(:config).returns({:socket => "marginalia_socket"})
-      Marginalia::Comment.components = [:socket]
-      API::V1::PostsController.action(:driver_only).call(@env)
-      assert_match %r{/\*socket:marginalia_socket}, @queries.first
-      pool.spec.unstub(:config)
-    end
+  def test_socket
+    # setting socket in configuration would break some connections - mock it instead
+    pool = ActiveRecord::Base.connection_pool
+    pool.db_config.stubs(:configuration_hash).returns({:socket => "marginalia_socket"})
+    Marginalia::Comment.components = [:socket]
+    API::V1::PostsController.action(:driver_only).call(@env)
+    assert_match %r{/\*socket:marginalia_socket}, @queries.first
+    pool.db_config.unstub(:configuration_hash)
   end
 
   def test_request_id
@@ -264,11 +209,6 @@ class MarginaliaTest < Minitest::Test
     Marginalia::Comment.components = [:request_id]
     PostsController.action(:driver_only).call(@env)
     assert_match %r{/\*request_id:some-uuid.*}, @queries.first
-
-    if using_rails_api?
-      PostsApiController.action(:driver_only).call(@env)
-      assert_match %r{/\*request_id:some-uuid.*}, @queries.second
-    end
   end
 
   def test_active_job
