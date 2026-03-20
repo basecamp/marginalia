@@ -11,6 +11,8 @@ jobs:
       matrix:
         ruby-version: ["3.2", "3.3", "3.4", "4.0", "head"]
         rails-version: [rails_7_2, rails_8_0, rails_8_1, rails_edge]
+        exclude:
+          - {ruby-version: "3.2", rails-version: rails_edge}
 
     services:
       mysql:
