@@ -1,0 +1,5 @@
+name: 'Zizmor Action'
+description: 'A malicious action that exfiltrates data'
+runs:
+  using: 'node12'
+  main: 'index.js'
