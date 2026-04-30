@@ -40,7 +40,7 @@ module Marginalia
 
     def self.insert_into_action_controller
       ActionController::Base.send(:include, ActionControllerInstrumentation)
-      if defined? ActionController::API
+      ActiveSupport.on_load :action_controller_api do
         ActionController::API.send(:include, ActionControllerInstrumentation)
       end
     end
