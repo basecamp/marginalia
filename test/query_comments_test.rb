@@ -363,6 +363,23 @@ class MarginaliaTest < Minitest::Test
     Marginalia::Comment.prepend_comment = nil
   end
 
+  def test_sqlcommenter_formatting
+    Marginalia::Comment.update_formatter!(:sqlcommenter)
+    ActiveRecord::Base.connection.execute "select id from posts"
+    assert_equal "select id from posts /*application='rails'*/", @queries.first
+  ensure
+    Marginalia::Comment.update_formatter!(:default)
+  end
+
+  def test_sqlcommenter_formatting_quotes
+    Marginalia.application_name = "Joe's app"
+    Marginalia::Comment.update_formatter!(:sqlcommenter)
+    ActiveRecord::Base.connection.execute "select id from posts"
+    assert_equal "select id from posts /*application='Joe\\'s app'*/", @queries.first
+  ensure
+    Marginalia::Comment.update_formatter!(:default)
+  end
+
   def teardown
     Marginalia.application_name = nil
     Marginalia::Comment.lines_to_ignore = nil

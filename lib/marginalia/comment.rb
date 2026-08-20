@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 require 'socket'
+require 'marginalia/formatter'
 
 module Marginalia
   module Comment
-    mattr_accessor :components, :lines_to_ignore, :prepend_comment
+    mattr_accessor :components, :lines_to_ignore, :prepend_comment, :formatter
+
     Marginalia::Comment.components ||= [:application, :controller, :action]
+
+    Marginalia::Comment.formatter ||= Marginalia::FormatterFactory.from_symbol(:default)
 
     def self.update!(controller = nil)
       self.marginalia_controller = controller
@@ -19,12 +23,17 @@ module Marginalia
       self.marginalia_adapter = adapter
     end
 
+    def self.update_formatter!(formatter = :default)
+      self.formatter = Marginalia::FormatterFactory.from_symbol(formatter)
+    end
+
     def self.construct_comment
       ret = String.new
       self.components.each do |c|
         component_value = self.send(c)
         if component_value.present?
-          ret << "#{c}:#{component_value},"
+          ret << "#{c}#{self.formatter.key_value_separator}"\
+                 "#{self.formatter.quote_value(component_value)},"
         end
       end
       ret.chop!
